@@ -53,7 +53,7 @@
 
 <section id="intro" class="card">
   <h1>Com quem você concorda mais?</h1>
-  <p>18 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda, discorda ou se depende. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
+  <p>15 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda, discorda ou se depende. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
   <p>No fim, você vê com qual candidato suas respostas batem mais, tema por tema, com a fonte de cada posição.</p>
   <p class="muted">As posições vêm dos planos de governo registrados no TSE e de declarações públicas dos candidatos. O quiz mede afinidade em 15 temas; não substitui acompanhar debates, histórico e propostas completas.</p>
   <button class="primary" onclick="start()">Começar</button>
@@ -145,22 +145,10 @@ const Q = [
     ft: "Quer voltar a privatizar, analisando empresa por empresa.",
     src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Economia", t: "A Petrobras deveria voltar a vender combustível diretamente aos postos e a fabricar adubo para a agricultura.",
-    L: 1, F: -1,
-    lt: "Está no plano de governo dele.",
-    ft: "Prefere privatizar e baixar o imposto do combustível, em vez de aumentar o tamanho da Petrobras.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Economia", t: "Os mais ricos deveriam pagar mais imposto, para que os mais pobres paguem menos.",
     L: 1, F: -1,
     lt: "Quer manter quem ganha até R$ 5 mil livre do Imposto de Renda e \"seguir taxando os mais ricos\".",
     ft: "Foca em baixar impostos para todos (na conta de luz, no combustível, nas compras) e cortar gastos do governo.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Economia", t: "O governo federal deveria ficar menor, com menos ministérios e menos gastos com a máquina pública.",
-    L: -1, F: 1,
-    lt: "Vê o governo como motor do crescimento do país, com obras públicas e incentivo à indústria.",
-    ft: "Quer acabar com pelo menos 10 ministérios e cortar gastos da máquina pública.",
     src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Economia", t: "O governo deveria cortar muito os próprios gastos para diminuir a dívida pública, mesmo que sobre menos dinheiro para outras áreas.",
@@ -189,12 +177,6 @@ const Q = [
     lt: "Encerrou o programa federal dessas escolas em 2023.",
     ft: "Quer mais escolas cívico-militares.",
     src: [["Fim do programa (Poder360)", "https://www.poder360.com.br/anuncios-do-governo/governo-lula-decide-encerrar-programa-de-escola-civico-militares/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Educação", t: "Quando faltar vaga em escola ou creche pública, o governo deveria pagar a mensalidade numa particular.",
-    L: -1, F: 1,
-    lt: "Prefere abrir mais vagas na rede pública: novas creches, escola em tempo integral e 111 novos Institutos Federais.",
-    ft: "Propõe que o governo pague a vaga na particular onde faltar vaga pública.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Meio ambiente", t: "Se o governo demorar demais para analisar o impacto de uma obra na natureza, a obra deveria ser liberada automaticamente.",
     h: "Hoje, obras como estradas, fábricas e barragens precisam de uma licença ambiental antes de começar.",
