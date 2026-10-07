@@ -46,6 +46,9 @@
   .pos b { display: inline-block; min-width: 64px; }
   a { color: var(--accent); }
   .hidden { display: none; }
+  .hint { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; margin: 0 0 4px; }
+  .hint::before { content: "Entenda: "; font-weight: 600; }
+  .hint:empty { display: none; }
 </style>
 </head>
 <body>
@@ -63,7 +66,7 @@
   <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qtheme"></span></div>
   <div class="bar"><div id="qbar"></div></div>
   <h2 id="qtext"></h2>
-  <p class="muted" id="qhint"></p>
+  <p class="hint" id="qhint"></p>
   <div class="opts" id="qopts"></div>
   <label class="weight"><input type="checkbox" id="qweight"> Esse tema pesa muito para mim</label>
   <div class="row" style="margin-top:16px">
@@ -107,6 +110,7 @@ const Q = [
     src: [["Governo Lula sobre facções (InfoMoney)", "https://www.infomoney.com.br/?p=3082986"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Segurança", t: "Deve continuar difícil para o cidadão comum comprar arma e andar armado.",
+    h: "Hoje é preciso autorização do governo para ter ou carregar arma. As regras ficaram mais rígidas em 2023, principalmente para atiradores, caçadores e colecionadores (os chamados CACs).",
     L: 1, F: -1,
     lt: "Assinou regras que dificultaram comprar e andar com arma, principalmente para atiradores e caçadores. Quer manter o controle.",
     ft: "Apresentou projeto para derrubar essas regras de Lula.",
@@ -120,6 +124,7 @@ const Q = [
     src: [["Flávio e a anistia (InfoMoney)", "https://www.infomoney.com.br/politica/flavio-diz-que-buscara-anistia-para-bolsonaro-ainda-durante-governo-de-transicao/"],
           ["Flávio: \"zerar o jogo\" (CNN)", "https://www.cnnbrasil.com.br/eleicoes/flavio-defende-anistia-zerar-o-jogo-e-subir-a-rampa-com-bolsonaro/"]] },
   { tema: "Costumes", t: "O aborto deveria ser tratado como um problema de saúde, e não só como crime.",
+    h: "Hoje o aborto é crime no Brasil, com três exceções: gravidez por estupro, risco de vida para a mulher e bebê sem cérebro (anencefalia). Tratar como questão de saúde significa focar em atendimento e prevenção, e não em punir a mulher.",
     L: 1, F: -1,
     lt: "Diz: \"Sou contra o aborto, mas, já que existe, é preciso tratar como questão de saúde pública.\"",
     ft: "Promete escolher para o STF ministros \"contra aborto e drogas\".",
@@ -133,6 +138,7 @@ const Q = [
     src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Trabalho", t: "Motoristas e entregadores de aplicativo deveriam ter uma lei própria, com contribuição obrigatória para o INSS e participação dos sindicatos.",
+    h: "Hoje motorista e entregador de aplicativo não têm carteira assinada. Pagar o INSS é opcional, como autônomo, e quem não paga fica sem aposentadoria e sem auxílio se adoecer ou se acidentar.",
     L: 1, F: -1,
     lt: "Quer uma lei que garanta aposentadoria e auxílio em caso de acidente, doença e maternidade, com contribuição para o INSS.",
     ft: "Quer manter o modelo de hoje, com alguma proteção do INSS, mas sem sindicatos definindo as regras.",
@@ -146,12 +152,14 @@ const Q = [
     src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Economia", t: "Os mais ricos deveriam pagar mais imposto, para que os mais pobres paguem menos.",
+    h: "Um exemplo é o que já vale desde 2026: quem ganha até R$ 5 mil por mês não paga Imposto de Renda, e quem ganha muito (acima de R$ 50 mil por mês) passou a pagar um imposto mínimo.",
     L: 1, F: -1,
     lt: "Quer manter quem ganha até R$ 5 mil livre do Imposto de Renda e \"seguir taxando os mais ricos\".",
     ft: "Foca em baixar impostos para todos (na conta de luz, no combustível, nas compras) e cortar gastos do governo.",
     src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
   { tema: "Economia", t: "O governo deveria cortar muito os próprios gastos para diminuir a dívida pública, mesmo que sobre menos dinheiro para outras áreas.",
+    h: "A dívida pública é o quanto o governo deve. Quanto maior ela é, mais juros o país paga e menos sobra para o resto. Cortar gastos ajuda a reduzir a dívida, mas pode tirar dinheiro de programas e serviços.",
     L: -1, F: 1,
     lt: "Quer manter a regra de gastos de hoje e aposta no crescimento da economia. Já disse que limite rígido de gastos \"tira dinheiro da saúde e educação\".",
     ft: "A equipe dele fala em cortar cerca de R$ 300 bilhões em gastos para reduzir a dívida.",
