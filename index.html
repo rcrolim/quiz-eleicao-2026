@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz do 2º turno</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --line: #e2e0db; --accent: #3a4a6b; --accent-soft: #e8ebf2;
+    --a: #8a5a2b; --b: #2b6a8a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #151517; --card: #1f1f22; --text: #ececee; --muted: #9a9aa2;
+      --line: #333338; --accent: #9fb0d6; --accent-soft: #2a2f3c; --a: #d9a46e; --b: #6fb6d9; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  h2 { font-size: 1.25rem; margin: 0 0 12px; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); font-size: .9rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); padding: 12px 16px; }
+  button.primary { background: var(--accent); color: var(--card); border-color: var(--accent); font-weight: 600; }
+  .opts { display: grid; gap: 8px; margin: 16px 0; }
+  .opts button { text-align: left; }
+  .opts button.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .row { display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+  .tag { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0 16px; }
+  .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+  label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 4px; }
+  label.weight input { width: 20px; height: 20px; }
+  .score { margin: 12px 0; }
+  .score .name { font-weight: 600; display: flex; justify-content: space-between; }
+  .score .bar { height: 14px; }
+  .score.a .bar > div { background: var(--a); }
+  .score.b .bar > div { background: var(--b); }
+  details { border-top: 1px solid var(--line); padding: 10px 0; }
+  summary { cursor: pointer; }
+  .pos { font-size: .92rem; margin: 6px 0 0; }
+  .pos b { display: inline-block; min-width: 64px; }
+  a { color: var(--accent); }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<main>
+
+<section id="intro" class="card">
+  <h1>Com quem você concorda mais?</h1>
+  <p>18 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda, discorda ou se depende. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
+  <p>No fim, você vê com qual candidato suas respostas batem mais, tema por tema, com a fonte de cada posição.</p>
+  <p class="muted">As posições vêm dos planos de governo registrados no TSE e de declarações públicas dos candidatos. O quiz mede afinidade em 15 temas; não substitui acompanhar debates, histórico e propostas completas.</p>
+  <button class="primary" onclick="start()">Começar</button>
+</section>
+
+<section id="quiz" class="card hidden">
+  <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qtheme"></span></div>
+  <div class="bar"><div id="qbar"></div></div>
+  <h2 id="qtext"></h2>
+  <div class="opts" id="qopts"></div>
+  <label class="weight"><input type="checkbox" id="qweight"> Esse tema pesa muito para mim</label>
+  <div class="row" style="margin-top:16px">
+    <button onclick="prev()" id="btnPrev">Voltar</button>
+    <button class="primary" onclick="next()" id="btnNext">Próxima</button>
+  </div>
+</section>
+
+<section id="result" class="hidden">
+  <div class="card">
+    <h1>Seu resultado</h1>
+    <div id="scores"></div>
+    <p class="muted" id="resNote"></p>
+    <button onclick="restart()">Refazer</button>
+  </div>
+  <div class="card">
+    <h2>Tema por tema</h2>
+    <p class="muted">Toque em cada tema para ver a posição dos dois e a fonte.</p>
+    <div id="detail"></div>
+  </div>
+</section>
+
+</main>
+<script>
+// Posição de cada candidato: 1 = concorda com a afirmação, -1 = discorda.
+// L = Lula (PT), F = Flávio Bolsonaro (PL).
+const CAND = { L: "Lula", F: "Flávio Bolsonaro" };
+const Q = [
+  { tema: "Segurança", t: "A maioridade penal deveria continuar em 18 anos.",
+    L: 1, F: -1,
+    lt: "O PT é contra a redução. Lula evitou se posicionar diretamente na campanha.",
+    ft: "Plano de governo propõe reduzir para 16 anos, e punir como adulto quem tem mais de 14 em crime hediondo.",
+    src: [["Plano de Flávio (Gazeta do Povo)", "https://www.gazetadopovo.com.br/eleicoes/2026/propostas-flavio-bolsonaro-plano-de-governo-seguranca-publica/"],
+          ["Lula e a maioridade (CNN)", "https://www.cnnbrasil.com.br/blogs/gustavo-uribe/politica/lula-mede-impacto-sobre-reducao-da-maioridade-penal/"]] },
+  { tema: "Segurança", t: "Facções como PCC e Comando Vermelho deveriam ser classificadas oficialmente como organizações terroristas.",
+    L: -1, F: 1,
+    lt: "Governo é contra a equiparação a terrorismo; defende a Lei Antifacção e asfixia financeira do crime.",
+    ft: "Promete declarar PCC, CV e milícias \"organizações narcoterroristas\" logo no início do governo.",
+    src: [["Governo Lula sobre facções (InfoMoney)", "https://www.infomoney.com.br/?p=3082986"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Segurança", t: "As regras para o cidadão comprar e andar com arma de fogo deveriam continuar rígidas.",
+    L: 1, F: -1,
+    lt: "Assinou decreto restringindo compra e porte de armas, sobretudo para CACs. Plano fala em manter o controle de armas.",
+    ft: "Autor de projeto para derrubar o decreto de Lula que restringiu os CACs.",
+    src: [["Decreto de armas (Congresso em Foco)", "https://www.congressoemfoco.com.br/noticia/9475/lula-assina-decreto-de-limitacao-no-porte-de-armas"],
+          ["Projetos contra o decreto (Congresso em Foco)", "https://www.congressoemfoco.com.br/noticia/116574/comissao-de-seguranca-analisa-revogacao-de-decreto-que-restringiu-cacs"]] },
+  { tema: "Política", t: "Os condenados pelos atos de 8 de janeiro, incluindo Jair Bolsonaro, deveriam receber anistia.",
+    L: -1, F: 1,
+    lt: "Contra. Vetou projeto que reduziria a pena de Jair Bolsonaro.",
+    ft: "Promete buscar a anistia já na transição; se não passar, conceder indulto.",
+    src: [["Flávio e a anistia (InfoMoney)", "https://www.infomoney.com.br/politica/flavio-diz-que-buscara-anistia-para-bolsonaro-ainda-durante-governo-de-transicao/"],
+          ["Flávio: \"zerar o jogo\" (CNN)", "https://www.cnnbrasil.com.br/eleicoes/flavio-defende-anistia-zerar-o-jogo-e-subir-a-rampa-com-bolsonaro/"]] },
+  { tema: "Costumes", t: "O aborto deveria ser tratado como questão de saúde pública, e não apenas como crime.",
+    L: 1, F: -1,
+    lt: "\"Sou contra o aborto, mas, já que existe, é preciso tratar como questão de saúde pública.\"",
+    ft: "Promete indicar ao STF ministros \"contra aborto e drogas\".",
+    src: [["Lula sobre aborto (Bloomberg Línea)", "https://www.bloomberglinea.com/br-pt/apos-reacoes-lula-diz-que-e-contra-aborto-mas-que-tema-e-de-saude-publica/"],
+          ["Flávio e o STF (Gazeta do Povo)", "https://www.gazetadopovo.com.br/eleicoes/2026/flavio-aposta-em-mudancas-no-stf-para-recuperar-credibilidade-da-corte/"]] },
+  { tema: "Trabalho", t: "A escala 6x1 deveria acabar por lei, com jornada de 40 horas sem redução de salário.",
+    L: 1, F: -1,
+    lt: "Plano apoia o fim da 6x1 com 40 horas semanais sem corte de salário.",
+    ft: "Plano não trata da 6x1; defende que acordo entre empresa e trabalhador valha mais que a lei.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Trabalho", t: "Motoristas e entregadores de aplicativo deveriam ter regulação com contribuição obrigatória para a Previdência e participação de sindicatos.",
+    L: 1, F: -1,
+    lt: "Plano propõe regular o trabalho por plataforma com financiamento da Previdência e cobertura de aposentadoria, acidente e maternidade.",
+    ft: "Manter o modelo atual com proteção previdenciária, sem sindicatos comandando a regulação.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Economia", t: "O governo deveria voltar a privatizar estatais.",
+    L: -1, F: 1,
+    lt: "Plano não propõe privatizações; quer a Petrobras de volta à distribuição de combustíveis.",
+    ft: "Retomar o programa de privatizações \"com critério\", caso a caso.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Economia", t: "A Petrobras deveria voltar a vender combustível diretamente nos postos e a produzir fertilizantes.",
+    L: 1, F: -1,
+    lt: "Está no plano de governo.",
+    ft: "Plano aposta em privatização e redução de imposto sobre combustível, não em ampliar a estatal.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Economia", t: "Os mais ricos deveriam pagar mais imposto para financiar alívio aos mais pobres.",
+    L: 1, F: -1,
+    lt: "Manter isenção de IR até R$ 5 mil e \"seguir taxando os mais ricos\".",
+    ft: "Foco em reduzir impostos (IVA, energia, combustível, IOF) e cortar gastos.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Economia", t: "O governo federal deveria encolher: menos ministérios e menos gasto com a máquina pública.",
+    L: -1, F: 1,
+    lt: "Vê o Estado como \"motor do desenvolvimento\", com política industrial e obras públicas (Novo PAC).",
+    ft: "Cortar ao menos 10 ministérios, reforma administrativa e \"Tesouraço\" de corte de gastos.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Economia", t: "O governo deveria adotar uma regra de gastos mais dura que a atual, com um corte grande de despesas para reduzir a dívida.",
+    L: -1, F: 1,
+    lt: "Plano mantém o arcabouço fiscal atual e aposta no crescimento para financiar o governo. Já disse que teto de gastos \"tira dinheiro da saúde e educação\".",
+    ft: "Plano prevê \"Tesouraço\" e superávit primário; a equipe econômica fala em PEC com corte de cerca de R$ 300 bilhões.",
+    src: [["PEC de corte de gastos (CNN, via ac24horas)", "https://ac24horas.com/2026/09/25/flavio-planeja-pec-da-transicao-com-corte-de-gastos-de-r-300-bilhoes/"],
+          ["Lula sobre teto de gastos (SBT News)", "https://sbtnews.sbt.com.br/noticia/politica/230550-quando-ha-teto-de-gastos-tira-dinheiro-da-saude-e-educacao-diz-lula"]] },
+  { tema: "Economia", t: "Os gastos mínimos obrigatórios com saúde e educação previstos na Constituição deveriam ser flexibilizados.",
+    L: -1, F: 0,
+    lt: "Contra. Defende a manutenção dos pisos e critica regras que reduzem verba de saúde e educação.",
+    ft: "Sinais contraditórios: a equipe econômica estudou desvincular os pisos, mas Flávio disse publicamente que não pretende mexer neles.",
+    src: [["Plano da equipe de Flávio (CNN, via ac24horas)", "https://ac24horas.com/2026/09/25/flavio-planeja-pec-da-transicao-com-corte-de-gastos-de-r-300-bilhoes/"],
+          ["Flávio nega mexer nos pisos (Correio do Estado)", "https://correiodoestado.com.br/politica/flavio-diz-nao-pretender-atacar-pisos-da-saude-e-educacao-vinculacao/468377/"]] },
+  { tema: "Costumes", t: "A misoginia (ódio ou aversão às mulheres) deveria virar crime, como o racismo.",
+    L: 1, F: 1,
+    lt: "PT e governo apoiam o projeto como avanço contra a violência de gênero.",
+    ft: "Votou a favor no Senado (aprovado por 67 a 0), com a ressalva de que o texto ainda tem lacunas.",
+    src: [["Posições sobre o PL da Misoginia (Jornal de Brasília)", "https://jornaldebrasilia.com.br/noticias/politica-e-poder/pl-da-misoginia-tem-aval-de-lula-ressalvas-de-flavio-oposicao-de-zema-e-silencio-de-caiado/"],
+          ["Flávio sobre o PL (Poder360)", "https://www.poder360.com.br/poder-congresso/flavio-diz-que-pl-da-misoginia-foi-uma-armadilha-do-pt-contra-ele/"]] },
+  { tema: "Educação", t: "O governo federal deveria apoiar e ampliar as escolas cívico-militares.",
+    L: -1, F: 1,
+    lt: "Encerrou o programa federal de escolas cívico-militares em 2023.",
+    ft: "Plano propõe mais escolas cívico-militares e \"escola sem doutrinação\".",
+    src: [["Fim do programa (Poder360)", "https://www.poder360.com.br/anuncios-do-governo/governo-lula-decide-encerrar-programa-de-escola-civico-militares/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Educação", t: "Onde faltar vaga em escola ou creche pública, o governo deveria pagar vaga em escola particular (voucher).",
+    L: -1, F: 1,
+    lt: "Plano aposta em ampliar a rede pública: creches pelo Novo PAC, tempo integral e 111 novos Institutos Federais.",
+    ft: "Plano propõe voucher de escola e creche privadas onde faltar vaga pública.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Meio ambiente", t: "Se o órgão ambiental não decidir no prazo, a licença ambiental deveria sair automaticamente.",
+    L: -1, F: 1,
+    lt: "Vetou 63 pontos da nova lei de licenciamento, incluindo o autolicenciamento ampliado.",
+    ft: "Plano propõe licença com prazo e concessão automática se o órgão não decidir a tempo.",
+    src: [["Vetos de Lula (Exame)", "https://exame.com/brasil/congresso-pode-derrubar-63-vetos-de-lula-a-lei-de-licenciamento-ambiental/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+  { tema: "Política externa", t: "O Brasil deveria priorizar o BRICS e a América do Sul, mais do que a aproximação com Estados Unidos e Israel.",
+    L: 1, F: -1,
+    lt: "Plano prioriza fortalecer BRICS, Mercosul e integração sul-americana.",
+    ft: "Plano propõe reaproximação com EUA, Argentina e Israel e retomar a entrada na OCDE.",
+    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
+          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+];
+
+const OPTS = [[1, "Concordo"], [0, "Depende / não sei"], [-1, "Discordo"]];
+let i = 0;
+const ans = Q.map(() => ({ v: null, w: false }));
+const $ = id => document.getElementById(id);
+
+function start() { $("intro").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); }
+function restart() { ans.forEach(a => { a.v = null; a.w = false; }); i = 0;
+  $("result").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); window.scrollTo(0, 0); }
+
+function render() {
+  const q = Q[i], a = ans[i];
+  $("qcount").textContent = `Pergunta ${i + 1} de ${Q.length}`;
+  $("qtheme").textContent = q.tema;
+  $("qbar").style.width = `${(i / Q.length) * 100}%`;
+  $("qtext").textContent = q.t;
+  $("qopts").innerHTML = "";
+  OPTS.forEach(([v, label]) => {
+    const b = document.createElement("button");
+    b.textContent = label;
+    if (a.v === v) b.className = "sel";
+    b.onclick = () => { a.v = v; render(); };
+    $("qopts").appendChild(b);
+  });
+  $("qweight").checked = a.w;
+  $("qweight").onchange = e => { a.w = e.target.checked; };
+  $("btnPrev").style.visibility = i === 0 ? "hidden" : "visible";
+  $("btnNext").textContent = i === Q.length - 1 ? "Ver resultado" : "Próxima";
+  $("btnNext").disabled = a.v === null;
+  $("btnNext").style.opacity = a.v === null ? .5 : 1;
+}
+function prev() { if (i > 0) { i--; render(); } }
+function next() { if (ans[i].v === null) return; if (i < Q.length - 1) { i++; render(); window.scrollTo(0, 0); } else showResult(); }
+
+// Concordância por pergunta: mesma posição = 1, "depende" = 0,5, posição oposta = 0. Peso 2 se marcado.
+function showResult() {
+  let max = 0; const pts = { L: 0, F: 0 };
+  Q.forEach((q, k) => { const a = ans[k], w = a.w ? 2 : 1; max += w;
+    ["L", "F"].forEach(c => { pts[c] += w * (1 - Math.abs(a.v - q[c]) / 2); }); });
+  const pct = { L: Math.round(pts.L / max * 100), F: Math.round(pts.F / max * 100) };
+  const order = ["L", "F"].sort((x, y) => pct[y] - pct[x] || CAND[x].localeCompare(CAND[y]));
+  $("scores").innerHTML = order.map(c =>
+    `<div class="score ${c === "L" ? "a" : "b"}"><div class="name"><span>${CAND[c]}</span><span>${pct[c]}%</span></div>
+     <div class="bar"><div style="width:${pct[c]}%"></div></div></div>`).join("");
+  const diff = Math.abs(pct.L - pct.F);
+  $("resNote").textContent = diff <= 10
+    ? "Diferença pequena: suas opiniões se dividem entre os dois. Vale olhar os temas que você marcou como importantes."
+    : `Suas respostas batem mais com ${CAND[order[0]]} nesses ${Q.length} temas.`;
+  const lbl = v => v === 1 ? "Concordo" : v === -1 ? "Discordo" : "Depende";
+  const pos = v => v === 1 ? "a favor" : v === -1 ? "contra" : "posição indefinida";
+  $("detail").innerHTML = Q.map((q, k) => {
+    const a = ans[k];
+    const dL = Math.abs(a.v - q.L), dF = Math.abs(a.v - q.F);
+    const near = dL === dF ? "igual com os dois" : (dL < dF ? CAND.L : CAND.F);
+    return `<details><summary><b>${q.tema}:</b> ${q.t}<br><span class="muted">Você: ${lbl(a.v)}${a.w ? " (peso dobrado)" : ""} · mais perto de: ${near}</span></summary>
+      <p class="pos"><b>Lula</b> ${pos(q.L)}. ${q.lt}</p>
+      <p class="pos"><b>Flávio</b> ${pos(q.F)}. ${q.ft}</p>
+      <p class="pos muted">Fontes: ${q.src.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ")}</p></details>`;
+  }).join("");
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden"); window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
