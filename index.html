@@ -56,7 +56,8 @@
 
 <section id="intro" class="card">
   <h1>Com quem você concorda mais?</h1>
-  <p>15 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda, discorda ou se depende. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
+  <p>15 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda ou discorda. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
+  <p>Se não tiver opinião formada, responda "Depende / não sei". Essa resposta não conta ponto para nenhum dos dois: a pergunta só fica fora da conta.</p>
   <p>No fim, você vê com qual candidato suas respostas batem mais, tema por tema, com a fonte de cada posição.</p>
   <p class="muted">As posições vêm dos planos de governo registrados no TSE e de declarações públicas dos candidatos. O quiz mede afinidade em 15 temas; não substitui acompanhar debates, histórico e propostas completas.</p>
   <button class="primary" onclick="start()">Começar</button>
@@ -202,7 +203,7 @@ const Q = [
           ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
 ];
 
-const OPTS = [[1, "Concordo"], [0, "Depende / não sei"], [-1, "Discordo"]];
+const OPTS = [[1, "Concordo"], [0, "Depende / não sei (não conta ponto)"], [-1, "Discordo"]];
 let i = 0;
 const ans = Q.map(() => ({ v: null, w: false }));
 const $ = id => document.getElementById(id);
@@ -236,20 +237,26 @@ function render() {
 function prev() { if (i > 0) { i--; render(); } }
 function next() { if (ans[i].v === null) return; if (i < Q.length - 1) { i++; render(); window.scrollTo(0, 0); } else showResult(); }
 
-// Concordância por pergunta: mesma posição = 1, "depende" = 0,5, posição oposta = 0. Peso 2 se marcado.
+// Concordância por pergunta: mesma posição = 1, posição oposta = 0, candidato com posição indefinida = 0,5.
+// "Depende / não sei" fica fora da conta. Peso 2 se marcado.
 function showResult() {
-  let max = 0; const pts = { L: 0, F: 0 };
-  Q.forEach((q, k) => { const a = ans[k], w = a.w ? 2 : 1; max += w;
+  let max = 0, n = 0; const pts = { L: 0, F: 0 };
+  Q.forEach((q, k) => { const a = ans[k], w = a.w ? 2 : 1; if (a.v === 0) return; max += w; n++;
     ["L", "F"].forEach(c => { pts[c] += w * (1 - Math.abs(a.v - q[c]) / 2); }); });
-  const pct = { L: Math.round(pts.L / max * 100), F: Math.round(pts.F / max * 100) };
+  if (n === 0) {
+    $("resNote").textContent = "Você respondeu \"Depende / não sei\" em todas, então não dá para calcular. Veja abaixo a posição de cada candidato, tema por tema.";
+  }
+  const pct = { L: n ? Math.round(pts.L / max * 100) : 0, F: n ? Math.round(pts.F / max * 100) : 0 };
   const order = ["L", "F"].sort((x, y) => pct[y] - pct[x] || CAND[x].localeCompare(CAND[y]));
-  $("scores").innerHTML = order.map(c =>
+  $("scores").innerHTML = !n ? "" : order.map(c =>
     `<div class="score ${c === "L" ? "a" : "b"}"><div class="name"><span>${CAND[c]}</span><span>${pct[c]}%</span></div>
      <div class="bar"><div style="width:${pct[c]}%"></div></div></div>`).join("");
   const diff = Math.abs(pct.L - pct.F);
-  $("resNote").textContent = diff <= 10
+  const fora = Q.length - n;
+  const conta = fora ? ` ${n} de ${Q.length} perguntas entraram na conta; as ${fora} com "Depende / não sei" ficaram de fora.` : "";
+  if (n) $("resNote").textContent = (diff <= 10
     ? "Diferença pequena: suas opiniões se dividem entre os dois. Vale olhar os temas que você marcou como importantes."
-    : `Suas respostas batem mais com ${CAND[order[0]]} nesses ${Q.length} temas.`;
+    : `Suas respostas batem mais com ${CAND[order[0]]}.`) + conta;
   const lbl = v => v === 1 ? "Concordo" : v === -1 ? "Discordo" : "Depende";
   const pos = v => v === 1 ? "a favor" : v === -1 ? "contra" : "posição indefinida";
   $("detail").innerHTML = Q.map((q, k) => {
