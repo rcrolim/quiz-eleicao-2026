@@ -8,68 +8,85 @@
   :root {
     --bg: #f6f5f2; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
     --line: #e2e0db; --accent: #3a4a6b; --accent-soft: #e8ebf2;
-    --a: #8a5a2b; --b: #2b6a8a;
+    --a: #8a5a2b; --b: #2b6a8a; --c: #7a7a80; --good: #2f6b45; --bad: #8a3b2b;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #151517; --card: #1f1f22; --text: #ececee; --muted: #9a9aa2;
-      --line: #333338; --accent: #9fb0d6; --accent-soft: #2a2f3c; --a: #d9a46e; --b: #6fb6d9; }
+      --line: #333338; --accent: #9fb0d6; --accent-soft: #2a2f3c; --a: #d9a46e; --b: #6fb6d9; --c: #9a9aa2;
+      --good: #7fc79a; --bad: #e39a86; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text);
     font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
   h1 { font-size: 1.6rem; margin: 0 0 8px; }
-  h2 { font-size: 1.25rem; margin: 0 0 12px; }
+  h2 { font-size: 1.2rem; margin: 0 0 12px; }
   p { margin: 0 0 12px; }
   .muted { color: var(--muted); font-size: .9rem; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
     background: var(--card); color: var(--text); padding: 12px 16px; }
   button.primary { background: var(--accent); color: var(--card); border-color: var(--accent); font-weight: 600; }
-  .opts { display: grid; gap: 8px; margin: 16px 0; }
-  .opts button { text-align: left; }
-  .opts button.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  button:disabled { opacity: .45; cursor: default; }
   .row { display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
   .tag { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0 16px; }
   .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
-  label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 4px; }
+  .hoje { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; margin-bottom: 14px; }
+  .hoje b { display: block; margin-bottom: 2px; }
+  .opt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt .t { font-weight: 600; margin-bottom: 6px; }
+  .opt .muda { font-size: .93rem; }
+  .opt .pc { font-size: .9rem; margin-top: 8px; }
+  .opt .pc p { margin: 6px 0 0; }
+  .opt .pc .g b { color: var(--good); }
+  .opt .pc .r b { color: var(--bad); }
+  .link { background: none; border: 0; padding: 6px 0 0; color: var(--accent); font-size: .9rem; text-decoration: underline; }
+  .ns { width: 100%; text-align: left; }
+  .ns.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 12px; }
   label.weight input { width: 20px; height: 20px; }
-  .score { margin: 12px 0; }
-  .score .name { font-weight: 600; display: flex; justify-content: space-between; }
-  .score .bar { height: 14px; }
-  .score.a .bar > div { background: var(--a); }
-  .score.b .bar > div { background: var(--b); }
+  .verdict { font-size: 1.35rem; font-weight: 700; margin: 4px 0 8px; }
+  .counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+  .counts div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+  .counts b { display: block; font-size: 1.5rem; }
+  .cL b { color: var(--a); } .cF b { color: var(--b); } .cN b { color: var(--c); }
   details { border-top: 1px solid var(--line); padding: 10px 0; }
   summary { cursor: pointer; }
   .pos { font-size: .92rem; margin: 6px 0 0; }
-  .pos b { display: inline-block; min-width: 64px; }
+  .star { color: var(--accent); font-weight: 700; }
+  ul.rules { margin: 0 0 12px; padding-left: 20px; }
+  ul.rules li { margin-bottom: 4px; }
   a { color: var(--accent); }
   .hidden { display: none; }
-  .hint { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; margin: 0 0 4px; }
-  .hint::before { content: "Entenda: "; font-weight: 600; }
-  .hint:empty { display: none; }
 </style>
 </head>
 <body>
 <main>
 
 <section id="intro" class="card">
-  <h1>Com quem você concorda mais?</h1>
-  <p>15 afirmações sobre temas do 2º turno de 2026 (25 de outubro). Para cada uma, diga se concorda ou discorda. Se um tema pesa muito para você, marque a caixinha e ele conta em dobro.</p>
-  <p>Se não tiver opinião formada, responda "Depende / não sei". Essa resposta não conta ponto para nenhum dos dois: a pergunta só fica fora da conta.</p>
-  <p>No fim, você vê com qual candidato suas respostas batem mais, tema por tema, com a fonte de cada posição.</p>
-  <p class="muted">As posições vêm dos planos de governo registrados no TSE e de declarações públicas dos candidatos. O quiz mede afinidade em 15 temas; não substitui acompanhar debates, histórico e propostas completas.</p>
+  <h1>Em que você acredita?</h1>
+  <p>15 perguntas sobre temas do 2º turno de 2026 (25 de outubro), em três blocos: economia e trabalho; políticas sociais e direitos; segurança, justiça e instituições.</p>
+  <p>Cada pergunta mostra como é hoje e duas opções, com o que muda, o ganho que quem defende espera e o risco que quem critica aponta. Pense no que você acredita, não em quem defende. O nome dos candidatos só aparece no fim.</p>
+  <ul class="rules muted">
+    <li>Se não tiver opinião formada, responda "Não sei / depende". Essa resposta não conta para ninguém.</li>
+    <li>Duas perguntas ficam fora da contagem e aparecem só para reflexão: em uma a posição de um dos candidatos não está clara, e na outra os dois pensam igual.</li>
+    <li>As posições vêm dos planos de governo registrados no TSE e de declarações públicas, com fonte em cada tema.</li>
+  </ul>
   <button class="primary" onclick="start()">Começar</button>
 </section>
 
 <section id="quiz" class="card hidden">
-  <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qtheme"></span></div>
+  <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qbloco"></span></div>
   <div class="bar"><div id="qbar"></div></div>
-  <h2 id="qtext"></h2>
-  <p class="hint" id="qhint"></p>
-  <div class="opts" id="qopts"></div>
-  <label class="weight"><input type="checkbox" id="qweight"> Esse tema pesa muito para mim</label>
+  <h2 id="qtitulo"></h2>
+  <div class="hoje"><b>Como é hoje</b><span id="qhoje"></span></div>
+  <p><b id="qp"></b></p>
+  <div id="qopts"></div>
+  <button class="ns" id="qns">Não sei / depende (não conta para ninguém)</button>
+  <label class="weight"><input type="checkbox" id="qweight"> Esse tema é muito importante para mim</label>
+  <p class="muted hidden" id="qinfo" style="margin-top:10px">Esta pergunta não entra na contagem: é só para reflexão.</p>
   <div class="row" style="margin-top:16px">
     <button onclick="prev()" id="btnPrev">Voltar</button>
     <button class="primary" onclick="next()" id="btnNext">Próxima</button>
@@ -78,196 +95,622 @@
 
 <section id="result" class="hidden">
   <div class="card">
-    <h1>Seu resultado</h1>
-    <div id="scores"></div>
-    <p class="muted" id="resNote"></p>
+    <span class="tag">Seu resultado</span>
+    <div class="verdict" id="verdict"></div>
+    <p id="verdictTxt"></p>
+    <div class="counts">
+      <div class="cL"><b id="nL">0</b>Lula</div>
+      <div class="cF"><b id="nF">0</b>Flávio Bolsonaro</div>
+      <div class="cN"><b id="nN">0</b>Não sei</div>
+    </div>
+    <p class="muted" id="countNote"></p>
     <button onclick="restart()">Refazer</button>
+  </div>
+  <div class="card hidden" id="impCard">
+    <h2>Os temas mais importantes para você</h2>
+    <div id="imp"></div>
   </div>
   <div class="card">
     <h2>Tema por tema</h2>
-    <p class="muted">Toque em cada tema para ver a posição dos dois e a fonte.</p>
+    <p class="muted">Toque em cada tema para ver quem defende cada opção e a fonte.</p>
     <div id="detail"></div>
   </div>
 </section>
 
 </main>
 <script>
-// Posição de cada candidato: 1 = concorda com a afirmação, -1 = discorda.
-// L = Lula (PT), F = Flávio Bolsonaro (PL).
-const CAND = { L: "Lula", F: "Flávio Bolsonaro" };
 const Q = [
-  { tema: "Segurança", t: "Quem tem menos de 18 anos e comete crime deve continuar sem ir para a prisão de adultos.",
-    h: "Hoje, menor de 18 anos que comete crime cumpre medida socioeducativa (internação na Fundação Casa, por exemplo), e não vai para a prisão comum.",
-    L: 1, F: -1,
-    lt: "O PT é contra baixar a idade. Lula evitou falar diretamente do assunto na campanha.",
-    ft: "Quer baixar a idade para 16 anos, e punir como adulto quem tem mais de 14 anos em crimes muito graves, como estupro e homicídio.",
-    src: [["Plano de Flávio (Gazeta do Povo)", "https://www.gazetadopovo.com.br/eleicoes/2026/propostas-flavio-bolsonaro-plano-de-governo-seguranca-publica/"],
-          ["Lula e a maioridade (CNN)", "https://www.cnnbrasil.com.br/blogs/gustavo-uribe/politica/lula-mede-impacto-sobre-reducao-da-maioridade-penal/"]] },
-  { tema: "Segurança", t: "Facções como PCC e Comando Vermelho deveriam ser tratadas por lei como grupos terroristas.",
-    h: "Hoje elas são tratadas como crime organizado. Classificar como terrorismo endurece as penas, mas o governo atual teme que isso abra espaço para outros países agirem dentro do Brasil.",
-    L: -1, F: 1,
-    lt: "Contra chamar de terrorismo. Prefere uma lei específica contra facções e cortar o dinheiro delas.",
-    ft: "Promete declarar PCC, CV e milícias como grupos terroristas logo no começo do governo.",
-    src: [["Governo Lula sobre facções (InfoMoney)", "https://www.infomoney.com.br/?p=3082986"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Segurança", t: "Deve continuar difícil para o cidadão comum comprar arma e andar armado.",
-    h: "Hoje é preciso autorização do governo para ter ou carregar arma. As regras ficaram mais rígidas em 2023, principalmente para atiradores, caçadores e colecionadores (os chamados CACs).",
-    L: 1, F: -1,
-    lt: "Assinou regras que dificultaram comprar e andar com arma, principalmente para atiradores e caçadores. Quer manter o controle.",
-    ft: "Apresentou projeto para derrubar essas regras de Lula.",
-    src: [["Decreto de armas (Congresso em Foco)", "https://www.congressoemfoco.com.br/noticia/9475/lula-assina-decreto-de-limitacao-no-porte-de-armas"],
-          ["Projetos contra o decreto (Congresso em Foco)", "https://www.congressoemfoco.com.br/noticia/116574/comissao-de-seguranca-analisa-revogacao-de-decreto-que-restringiu-cacs"]] },
-  { tema: "Política", t: "Quem foi condenado pelos ataques de 8 de janeiro em Brasília, incluindo Jair Bolsonaro, deveria ser perdoado.",
-    h: "Esse perdão por lei se chama anistia: a pessoa deixa de cumprir a pena.",
-    L: -1, F: 1,
-    lt: "Contra. Vetou um projeto que diminuiria a pena de Jair Bolsonaro.",
-    ft: "Promete aprovar o perdão antes mesmo de tomar posse; se não conseguir, usar o poder de presidente para perdoar.",
-    src: [["Flávio e a anistia (InfoMoney)", "https://www.infomoney.com.br/politica/flavio-diz-que-buscara-anistia-para-bolsonaro-ainda-durante-governo-de-transicao/"],
-          ["Flávio: \"zerar o jogo\" (CNN)", "https://www.cnnbrasil.com.br/eleicoes/flavio-defende-anistia-zerar-o-jogo-e-subir-a-rampa-com-bolsonaro/"]] },
-  { tema: "Costumes", t: "O aborto deveria ser tratado como um problema de saúde, e não só como crime.",
-    h: "Hoje o aborto é crime no Brasil, com três exceções: gravidez por estupro, risco de vida para a mulher e bebê sem cérebro (anencefalia). Tratar como questão de saúde significa focar em atendimento e prevenção, e não em punir a mulher.",
-    L: 1, F: -1,
-    lt: "Diz: \"Sou contra o aborto, mas, já que existe, é preciso tratar como questão de saúde pública.\"",
-    ft: "Promete escolher para o STF ministros \"contra aborto e drogas\".",
-    src: [["Lula sobre aborto (Bloomberg Línea)", "https://www.bloomberglinea.com/br-pt/apos-reacoes-lula-diz-que-e-contra-aborto-mas-que-tema-e-de-saude-publica/"],
-          ["Flávio e o STF (Gazeta do Povo)", "https://www.gazetadopovo.com.br/eleicoes/2026/flavio-aposta-em-mudancas-no-stf-para-recuperar-credibilidade-da-corte/"]] },
-  { tema: "Trabalho", t: "Uma lei deveria acabar com a escala de 6 dias de trabalho para 1 de folga, sem diminuir o salário.",
-    h: "A proposta é limitar a semana a 40 horas, o que daria duas folgas por semana para a maioria.",
-    L: 1, F: -1,
-    lt: "A favor: fim da escala 6x1, com 40 horas por semana e sem corte de salário.",
-    ft: "Não fala da escala 6x1. Defende que patrão e empregado combinem as regras entre si, em vez de a lei impor.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Aposentadoria", t: "A aposentadoria do INSS e o salário mínimo deveriam continuar subindo todo ano acima da inflação.",
-    h: "Hoje o salário mínimo sobe todo ano pela inflação mais um ganho extra ligado ao crescimento da economia. Quem recebe aposentadoria ou BPC (o benefício para idosos e pessoas com deficiência de baixa renda) no valor de um salário mínimo ganha o mesmo aumento.",
-    L: 1, F: 0,
-    lt: "A favor. O plano mantém o aumento do salário mínimo acima da inflação, que também reajusta as aposentadorias de um salário mínimo.",
-    ft: "Não está claro: em abril de 2026 a Folha noticiou que a equipe dele planejava corrigir aposentadorias e BPC só pela inflação. Flávio diz que \"não fará economia com quem ganha salário mínimo\", e a campanha afirma que mantém a ligação com o mínimo.",
-    src: [["Lula x Flávio na aposentadoria (A Revista)", "https://arevista.com.br/economia/lula-x-flavio-o-que-pode-mudar-na-aposentadoria-no-bpc-e-no-salario-minimo-apos-a-eleicao/"],
-          ["Candidatos e a Previdência (Gazeta do Povo)", "https://www.gazetadopovo.com.br/eleicoes/2026/candidatos-presidencia-revogar-reforma-previdencia/"]] },
-  { tema: "Economia", t: "O governo deveria voltar a vender empresas públicas para a iniciativa privada.",
-    h: "Isso se chama privatização. Exemplos de empresas públicas: Correios, Petrobras, Banco do Brasil.",
-    L: -1, F: 1,
-    lt: "Não propõe vender nenhuma empresa pública.",
-    ft: "Quer voltar a privatizar, analisando empresa por empresa.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Economia", t: "Os mais ricos deveriam pagar mais imposto, para que os mais pobres paguem menos.",
-    h: "Um exemplo é o que já vale desde 2026: quem ganha até R$ 5 mil por mês não paga Imposto de Renda, e quem ganha muito (acima de R$ 50 mil por mês) passou a pagar um imposto mínimo.",
-    L: 1, F: -1,
-    lt: "Quer manter quem ganha até R$ 5 mil livre do Imposto de Renda e \"seguir taxando os mais ricos\".",
-    ft: "Foca em baixar impostos para todos (na conta de luz, no combustível, nas compras) e cortar gastos do governo.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Economia", t: "Hoje é mais importante o governo gastar menos para diminuir a dívida do que manter o ritmo de gastos com obras e programas sociais.",
-    h: "O governo gasta com aposentadorias, salários de servidores, saúde, educação, programas sociais e obras. A dívida pública é o quanto ele deve: quanto maior, mais juros o país paga. A diferença entre os dois está no tamanho do corte: Flávio quer um corte grande; Lula quer manter a regra de hoje, em que o gasto pode crescer um pouco acima da inflação todo ano.",
-    L: -1, F: 1,
-    lt: "Quer manter a regra de gastos de hoje e aposta no crescimento da economia para pagar as contas. Já disse que limite rígido de gastos \"tira dinheiro da saúde e educação\".",
-    ft: "Quer cortar pelo menos 10 ministérios, cargos, supersalários e fraudes em benefícios. A equipe dele fala em cerca de R$ 300 bilhões de corte no total.",
-    src: [["Corte de gastos (CNN, via ac24horas)", "https://ac24horas.com/2026/09/25/flavio-planeja-pec-da-transicao-com-corte-de-gastos-de-r-300-bilhoes/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"],
-          ["Lula sobre teto de gastos (SBT News)", "https://sbtnews.sbt.com.br/noticia/politica/230550-quando-ha-teto-de-gastos-tira-dinheiro-da-saude-e-educacao-diz-lula"]] },
-  { tema: "Economia", t: "O governo deveria poder gastar menos com saúde e educação do que a lei obriga hoje.",
-    h: "Hoje a Constituição obriga o governo a gastar um valor mínimo com saúde e com educação, que sobe quando a arrecadação sobe.",
-    L: -1, F: 0,
-    lt: "Contra. Quer manter o gasto mínimo obrigatório com saúde e educação.",
-    ft: "Não está claro: a equipe dele estudou acabar com esse mínimo, mas Flávio disse em público que não vai mexer nisso.",
-    src: [["Plano da equipe de Flávio (CNN, via ac24horas)", "https://ac24horas.com/2026/09/25/flavio-planeja-pec-da-transicao-com-corte-de-gastos-de-r-300-bilhoes/"],
-          ["Flávio nega mexer nos pisos (Correio do Estado)", "https://correiodoestado.com.br/politica/flavio-diz-nao-pretender-atacar-pisos-da-saude-e-educacao-vinculacao/468377/"]] },
-  { tema: "Costumes", t: "Ofender ou atacar mulheres por elas serem mulheres deveria ser crime, do mesmo jeito que o racismo.",
-    h: "Esse ódio contra mulheres se chama misoginia.",
-    L: 1, F: 1,
-    lt: "A favor. O PT trata o projeto como avanço contra a violência contra a mulher.",
-    ft: "Votou a favor no Senado (aprovado por 67 a 0), mas disse que o texto ainda precisa de ajustes.",
-    src: [["Posições sobre o PL da Misoginia (Jornal de Brasília)", "https://jornaldebrasilia.com.br/noticias/politica-e-poder/pl-da-misoginia-tem-aval-de-lula-ressalvas-de-flavio-oposicao-de-zema-e-silencio-de-caiado/"],
-          ["Flávio sobre o PL (Poder360)", "https://www.poder360.com.br/poder-congresso/flavio-diz-que-pl-da-misoginia-foi-uma-armadilha-do-pt-contra-ele/"]] },
-  { tema: "Educação", t: "O governo federal deveria ter mais escolas públicas administradas com ajuda de militares.",
-    h: "São as escolas cívico-militares: os professores continuam civis, e militares cuidam da disciplina e da organização.",
-    L: -1, F: 1,
-    lt: "Encerrou o programa federal dessas escolas em 2023.",
-    ft: "Quer mais escolas cívico-militares.",
-    src: [["Fim do programa (Poder360)", "https://www.poder360.com.br/anuncios-do-governo/governo-lula-decide-encerrar-programa-de-escola-civico-militares/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Meio ambiente", t: "Se o governo demorar demais para analisar o impacto de uma obra na natureza, a obra deveria ser liberada automaticamente.",
-    h: "Hoje, obras como estradas, fábricas e barragens precisam de uma licença ambiental antes de começar.",
-    L: -1, F: 1,
-    lt: "Vetou 63 trechos da nova lei de licença ambiental, entre eles os que ampliavam a autorização dada pela própria empresa, sem análise prévia.",
-    ft: "Quer prazo para a análise, com liberação automática se o órgão não responder a tempo.",
-    src: [["Vetos de Lula (Exame)", "https://exame.com/brasil/congresso-pode-derrubar-63-vetos-de-lula-a-lei-de-licenciamento-ambiental/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
-  { tema: "Relações com outros países", t: "O Brasil deveria dar mais prioridade ao BRICS e aos vizinhos da América do Sul do que aos Estados Unidos e a Israel.",
-    h: "O BRICS é um grupo de países do qual o Brasil faz parte, junto com China, Rússia, Índia e África do Sul, entre outros.",
-    L: 1, F: -1,
-    lt: "Quer fortalecer o BRICS, o Mercosul e a união com os países da América do Sul.",
-    ft: "Quer se reaproximar de Estados Unidos, Argentina e Israel, e negociar com todos de forma prática.",
-    src: [["Plano de Lula", "https://planodegoverno2026.com.br/candidatos/presidente/lula/"],
-          ["Plano de Flávio", "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"]] },
+ {
+  "bloco": "Economia e trabalho",
+  "titulo": "Trabalho: escala 6x1",
+  "hoje": "a lei permite até 44 horas por semana, com uma folga. A escala 6x1 é comum no comércio e nos serviços.",
+  "p": "Sobre a jornada de trabalho:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Uma lei deveria acabar com a escala 6x1 e limitar a semana a 40 horas, sem cortar salário",
+    "muda": "Muda a Constituição: duas folgas por semana; a empresa reorganiza turnos ou contrata mais gente",
+    "ganho": "Mais descanso, saúde e tempo com a família",
+    "risco": "Custo maior para a empresa, sobretudo a pequena, que pode virar demissão, preço mais alto ou trabalho sem carteira",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Patrão e empregado deveriam combinar a jornada entre si",
+    "muda": "Continua o limite atual, e cada setor ajusta a escala em acordo com os trabalhadores",
+    "ganho": "Cada setor faz o que cabe na sua realidade, sem uma regra única para todos",
+    "risco": "O trabalhador tem pouco poder para negociar, e a 6x1 continua onde já existe",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "Plano de Lula",
+    "https://planodegoverno2026.com.br/candidatos/presidente/lula/"
+   ],
+   [
+    "Plano de Flávio",
+    "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Economia e trabalho",
+  "titulo": "Economia: estatais",
+  "hoje": "o governo controla várias empresas, como Correios, Caixa e Petrobras.",
+  "p": "Empresas públicas, como os Correios, deveriam:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Continuar com o governo",
+    "muda": "Nada muda: o governo segue dono, define preço e atendimento",
+    "ganho": "O serviço chega a lugares que não dão lucro, como o interior, e setores estratégicos ficam sob controle do país",
+    "risco": "Quando a empresa dá prejuízo, quem paga é o dinheiro público, e os cargos viram moeda de troca política",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Ser vendidas à iniciativa privada, analisando caso a caso",
+    "muda": "Uma empresa privada compra e opera o serviço, sob regras de uma agência do governo; o dinheiro da venda entra no caixa",
+    "ganho": "Mais eficiência, menos uso político e dinheiro para o governo",
+    "risco": "Tarifa mais alta, e o atendimento em regiões que não dão lucro pode piorar",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "Plano de Lula",
+    "https://planodegoverno2026.com.br/candidatos/presidente/lula/"
+   ],
+   [
+    "Plano de Flávio",
+    "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Economia e trabalho",
+  "titulo": "Economia: contas do governo",
+  "hoje": "o gasto do governo pode crescer até 2,5% acima da inflação por ano. A dívida é alta, e os juros que o governo paga sobre ela pesam no orçamento.",
+  "p": "Para equilibrar as contas do governo, o caminho principal deveria ser:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Cortar gastos da máquina pública",
+    "muda": "Fechar ministérios (Flávio fala em pelo menos 10), cortar cargos de indicação política, salários acima do teto e fraudes em benefícios. A equipe dele fala em cerca de R$ 300 bilhões",
+    "ganho": "Dívida menor leva a juros menores, e o crédito fica mais barato para todo mundo",
+    "risco": "Corte desse tamanho não sai só de cargos e mordomias e acaba atingindo serviços e investimentos",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "Cobrar mais imposto de quem ganha muito e manter os gastos",
+    "muda": "O gasto segue dentro da regra atual, e o dinheiro extra vem de impostos sobre altas rendas, como o imposto mínimo para quem ganha acima de R$ 50 mil por mês, em vigor desde 2026",
+    "ganho": "Mantém os serviços, e quem ganha mais contribui mais",
+    "risco": "Imposto alto pode afastar investimento, e a dívida continua crescendo",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Corte de gastos de Flávio (CNN, via ac24horas)",
+    "https://ac24horas.com/2026/09/25/flavio-planeja-pec-da-transicao-com-corte-de-gastos-de-r-300-bilhoes/"
+   ],
+   [
+    "Plano de Lula",
+    "https://planodegoverno2026.com.br/candidatos/presidente/lula/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Economia e trabalho",
+  "titulo": "Meio ambiente: licença para obras",
+  "hoje": "uma obra (estrada, fábrica, barragem) só começa com licença ambiental emitida.",
+  "p": "Quando o órgão ambiental demora para analisar uma obra:",
+  "conta": true,
+  "op": [
+   {
+    "t": "A obra deve esperar a análise terminar, mesmo que demore",
+    "muda": "Nada muda",
+    "ganho": "Nenhuma obra começa sem que se saiba o dano que ela pode causar",
+    "risco": "A demora de anos trava estradas, energia e empregos",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "A licença deve sair automaticamente depois de um prazo",
+    "muda": "Se o órgão não responder no prazo da lei, a licença vale como concedida e a obra pode começar",
+    "ganho": "A obra sai mais rápido, e o órgão é obrigado a cumprir prazo",
+    "risco": "Uma obra com dano sério pode passar sem análise só porque o órgão está sem gente",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "Vetos de Lula (Exame)",
+    "https://exame.com/brasil/congresso-pode-derrubar-63-vetos-de-lula-a-lei-de-licenciamento-ambiental/"
+   ],
+   [
+    "Plano de Flávio",
+    "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Economia e trabalho",
+  "titulo": "Aposentadoria",
+  "hoje": "a aposentadoria de um salário mínimo sobe junto com ele: inflação mais o crescimento da economia, até 2,5% acima da inflação.",
+  "p": "A aposentadoria de quem recebe um salário mínimo deveria:",
+  "conta": false,
+  "op": [
+   {
+    "t": "Subir todo ano acima da inflação, junto com o salário mínimo",
+    "muda": "Nada muda",
+    "ganho": "O aposentado mais pobre ganha poder de compra ano a ano",
+    "risco": "O gasto do INSS cresce rápido e pressiona as contas do governo",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Subir só pela inflação",
+    "muda": "A aposentadoria mantém o poder de compra, mas deixa de ganhar o aumento extra",
+    "ganho": "Grande economia para o governo, que ajuda a controlar a dívida",
+    "risco": "O aposentado mais pobre fica para trás em relação a quem está trabalhando",
+    "quem": "Flávio: não está claro",
+    "lado": "U"
+   }
+  ],
+  "src": [
+   [
+    "Lula x Flávio na aposentadoria (A Revista)",
+    "https://arevista.com.br/economia/lula-x-flavio-o-que-pode-mudar-na-aposentadoria-no-bpc-e-no-salario-minimo-apos-a-eleicao/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Políticas sociais e direitos",
+  "titulo": "Costumes: aborto",
+  "hoje": "aborto é crime, com três exceções: gravidez por estupro, risco de vida da mulher e bebê sem cérebro (anencefalia).",
+  "p": "Fora dessas exceções, o aborto deveria ser tratado:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Como crime, como é hoje",
+    "muda": "Nada muda: a mulher pode ter pena de 1 a 3 anos, e quem faz o procedimento também responde",
+    "ganho": "Protege a vida desde a concepção e desestimula o aborto",
+    "risco": "Os abortos continuam acontecendo escondidos, e quem morre por aborto inseguro são sobretudo mulheres pobres",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "Como questão de saúde pública",
+    "muda": "O foco passa a ser atendimento no SUS, prevenção e acompanhamento. Esse caminho costuma vir junto com deixar de punir a mulher, como pede uma ação no STF que libera o aborto até 12 semanas",
+    "ganho": "Menos mortes por aborto inseguro e mais prevenção de gravidez indesejada",
+    "risco": "Pode aumentar o número de abortos e vai contra a convicção religiosa de boa parte da população",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Lula sobre aborto (Bloomberg Línea)",
+    "https://www.bloomberglinea.com/br-pt/apos-reacoes-lula-diz-que-e-contra-aborto-mas-que-tema-e-de-saude-publica/"
+   ],
+   [
+    "Flávio e o STF (Gazeta do Povo)",
+    "https://www.gazetadopovo.com.br/eleicoes/2026/flavio-aposta-em-mudancas-no-stf-para-recuperar-credibilidade-da-corte/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Políticas sociais e direitos",
+  "titulo": "Direitos: cotas",
+  "hoje": "universidades federais e concursos públicos reservam vagas para quem estudou em escola pública e tem baixa renda, e parte dessas vagas é para pretos, pardos e indígenas. A Lei de Cotas foi renovada em 2023.",
+  "p": "As cotas em universidades e concursos públicos deveriam levar em conta:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Renda, escola pública e também cor ou raça, como é hoje",
+    "muda": "Nada muda",
+    "ganho": "Corrige uma desigualdade que a renda sozinha não explica: entre pessoas com a mesma renda, negros ainda enfrentam mais barreiras",
+    "risco": "Quem tem a mesma renda e não entra na cota racial perde a vaga, e há casos de fraude na autodeclaração",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Só renda e escola pública (cota social)",
+    "muda": "Acabam as vagas reservadas por cor; continua a reserva para quem estudou em escola pública e tem baixa renda",
+    "ganho": "Ajuda todos os pobres sem separar por cor, e como a maioria dos pobres é negra, eles continuam sendo atendidos",
+    "risco": "A presença de negros nas universidades e no serviço público pode cair",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "O que cada candidato diz (Terra)",
+    "https://www.terra.com.br/nos/lei-de-cotas-raciais-o-que-cada-candidato-diz-sobre-o-tema,de203a6c85ba7a2a60d0c43bd9ca4239k2yea5g8.html"
+   ],
+   [
+    "Propostas comparadas (Gazeta de SP)",
+    "https://www.gazetasp.com.br/politica/eleicoes-2026-compare-as-propostas-de-governo-de-flavio-bolsonaro-e-lula-para-os-proximos-quatro-anos/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Políticas sociais e direitos",
+  "titulo": "Educação: escolas cívico-militares",
+  "hoje": "o programa federal acabou em 2023. Alguns estados, como São Paulo e Paraná, mantêm programas próprios.",
+  "p": "As escolas cívico-militares (militares cuidando da disciplina, professores civis) deveriam:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Ter um programa do governo federal para ampliar o modelo",
+    "muda": "O governo federal paga e cede militares para as escolas que aderirem, como no programa de 2019 a 2023",
+    "ganho": "Mais disciplina e segurança na escola, o que ajuda no aprendizado",
+    "risco": "Custo de pagar militares, que poderia ir para professores, e um modelo rígido que não serve para todo aluno",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "Ficar a critério de estados e municípios",
+    "muda": "Nada muda",
+    "ganho": "O dinheiro federal vai para professores e estrutura, e cada estado decide se quer o modelo",
+    "risco": "Estados sem dinheiro ficam sem essa opção",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Lula: \"não é obrigação do MEC\" (SBT News)",
+    "https://sbtnews.sbt.com.br/noticia/governo/253096-nao-e-obrigacao-do-mec-cuidar-disso-diz-lula-sobre-escolas-civico-militares"
+   ],
+   [
+    "Plano de Flávio",
+    "https://planodegoverno2026.com.br/candidatos/presidente/flavio-bolsonaro/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Políticas sociais e direitos",
+  "titulo": "Redes sociais",
+  "hoje": "desde 2025, por decisão do STF, as redes podem ser punidas se não apagarem conteúdo ilegal depois de avisadas, mesmo sem ordem de juiz. Para ofensa pessoal (calúnia, difamação), ainda precisa de ordem de juiz.",
+  "p": "Sobre o que circula nas redes sociais:",
+  "conta": true,
+  "op": [
+   {
+    "t": "As redes só deveriam apagar publicações com ordem de um juiz",
+    "muda": "Volta a regra anterior a 2025: a plataforma só responde se descumprir uma decisão judicial",
+    "ganho": "Ninguém tem opinião apagada sem passar por um juiz, o que reduz o risco de censura política",
+    "risco": "Golpes, fraudes e ataques ficam no ar por dias até sair uma decisão",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "As redes deveriam ser obrigadas a apagar ataques à democracia, discurso de ódio e golpes, mesmo sem ordem de juiz",
+    "muda": "Mantém e amplia a regra atual",
+    "ganho": "Conteúdo criminoso sai do ar rápido, antes de se espalhar",
+    "risco": "Para não ser punida, a plataforma tende a apagar demais, inclusive opinião legítima; e alguém precisa decidir o que é \"ataque à democracia\"",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Plano de Flávio (GNews USA)",
+    "https://gnewsusa.com/2026/08/plano-de-governo-de-flavio-bolsonaro-propoe-mudancas-no-stf-fim-da-reeleicao-e-reducao-de-ministerios/"
+   ],
+   [
+    "Governo Lula no STF (Jornal de Brasília)",
+    "https://jornaldebrasilia.com.br/noticias/politica-e-poder/governo-altera-posicao-em-julgamento-no-stf-sobre-redes-e-defende-derrubada-de-regra-do-marco-civil/"
+   ],
+   [
+    "A decisão do STF (Mattos Filho)",
+    "https://www.mattosfilho.com.br/unico/responsabilizacao-provedores-internet/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Políticas sociais e direitos",
+  "titulo": "Mulheres: misoginia",
+  "hoje": "ofensa ou ataque a mulher é punido como injúria, ameaça, violência ou pela Lei Maria da Penha.",
+  "p": "Ofender, discriminar ou incitar ódio contra mulheres por serem mulheres (misoginia) deveria:",
+  "conta": false,
+  "op": [
+   {
+    "t": "Virar um crime próprio, como o racismo",
+    "muda": "A misoginia entra na lei do racismo, com pena de prisão própria",
+    "ganho": "Reconhece o ódio contra a mulher como crime específico e pune ataques que hoje escapam",
+    "risco": "Uma definição ampla pode punir piada ou opinião",
+    "quem": "Os dois",
+    "lado": "B"
+   },
+   {
+    "t": "Continuar como hoje",
+    "muda": "Nada muda",
+    "ganho": "Evita uma lei nova de definição vaga",
+    "risco": "Ataques a mulheres como grupo, sobretudo nas redes, seguem sem punição clara",
+    "quem": "Nenhum",
+    "lado": "N"
+   }
+  ],
+  "src": [
+   [
+    "Posições sobre o projeto (Jornal de Brasília)",
+    "https://jornaldebrasilia.com.br/noticias/politica-e-poder/pl-da-misoginia-tem-aval-de-lula-ressalvas-de-flavio-oposicao-de-zema-e-silencio-de-caiado/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Segurança, justiça e instituições",
+  "titulo": "Segurança: menor de idade que comete crime grave",
+  "hoje": "menor de 18 anos cumpre medida socioeducativa, com internação de no máximo 3 anos. A idade está na Constituição.",
+  "p": "Um adolescente de 16 ou 17 anos que comete um crime grave, como homicídio ou estupro, deveria:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Ir para a prisão comum, como um adulto",
+    "muda": "Muda a Constituição. O jovem é julgado pelo Código Penal: homicídio simples, por exemplo, dá de 6 a 20 anos",
+    "ganho": "Pena proporcional ao crime, e as facções deixam de usar menores justamente porque eles pegam pena leve",
+    "risco": "Os presídios estão lotados e dominados por facções; o jovem tende a sair de lá mais ligado ao crime",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "Cumprir medida em instituição para menores, como é hoje",
+    "muda": "Nada muda: internação com escola obrigatória, por no máximo 3 anos, e saída obrigatória aos 21",
+    "ganho": "O foco é recuperar o jovem, longe dos presos adultos",
+    "risco": "No máximo 3 anos mesmo por homicídio, o que passa sensação de impunidade para a vítima e a família",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Plano de Flávio (Gazeta do Povo)",
+    "https://www.gazetadopovo.com.br/eleicoes/2026/propostas-flavio-bolsonaro-plano-de-governo-seguranca-publica/"
+   ],
+   [
+    "Lula e a maioridade (CNN)",
+    "https://www.cnnbrasil.com.br/blogs/gustavo-uribe/politica/lula-mede-impacto-sobre-reducao-da-maioridade-penal/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Segurança, justiça e instituições",
+  "titulo": "Segurança: facções criminosas",
+  "hoje": "no Brasil, facções são crime organizado. Em junho de 2026, os Estados Unidos classificaram PCC e CV como terroristas pela lei deles, e o governo brasileiro recusou fazer o mesmo aqui.",
+  "p": "Facções como PCC e Comando Vermelho deveriam ser tratadas, pela lei brasileira, como:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Crime organizado, com foco em cortar o dinheiro delas",
+    "muda": "Integrar facção continua dando de 3 a 8 anos; o foco é bloquear contas, bens e lavagem de dinheiro",
+    "ganho": "O Brasil decide sozinho como combater o crime dentro do seu território",
+    "risco": "Penas menores, e o Estado já perdeu bairros inteiros para as facções com o modelo atual",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Grupos terroristas",
+    "muda": "Integrar facção vira terrorismo (5 a 8 anos; atos terroristas, 12 a 30). Polícia e Justiça ganham as ferramentas da lei antiterror",
+    "ganho": "Penas maiores e mais facilidade para rastrear o dinheiro das facções fora do país, junto com os Estados Unidos",
+    "risco": "Empresas honestas que fizerem negócio, sem saber, com uma empresa de fachada da facção podem ser investigadas por financiar terrorismo; construção, imóveis e postos de combustível são os setores mais expostos. O governo também teme abrir espaço para outro país agir militarmente contra esses grupos, como os EUA fizeram em 2025 com barcos de grupos que classificaram como terroristas no Caribe",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "EUA e PCC/CV (Gazeta do Povo)",
+    "https://www.gazetadopovo.com.br/economia/como-o-selo-de-terrorista-para-pcc-e-cv-afeta-bancos-e-empresas-no-brasil/"
+   ],
+   [
+    "Governo Lula sobre facções (InfoMoney)",
+    "https://www.infomoney.com.br/?p=3082986"
+   ]
+  ]
+ },
+ {
+  "bloco": "Segurança, justiça e instituições",
+  "titulo": "Segurança: armas",
+  "hoje": "o cidadão comum pode ter até 2 armas em casa, se comprovar que precisa, com curso, exame psicológico e registro. Andar armado na rua é exceção.",
+  "p": "Sobre o cidadão comum ter arma de fogo:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Deveria ser mais fácil comprar e ter arma para se defender",
+    "muda": "Volta a regras como as de 2019: até 4 armas por pessoa, sem precisar provar necessidade, e mais acesso para atiradores e caçadores (CACs)",
+    "ganho": "O cidadão pode se defender, sobretudo onde a polícia demora a chegar",
+    "risco": "Mais armas em circulação; armas compradas legalmente por CACs já foram encontradas com facções",
+    "quem": "Flávio",
+    "lado": "F"
+   },
+   {
+    "t": "As regras deveriam continuar rígidas",
+    "muda": "Nada muda",
+    "ganho": "Menos armas circulando, menos mortes em brigas e menos desvio para o crime",
+    "risco": "Quem mora em lugar violento fica sem meio legal de se defender, enquanto o criminoso continua armado",
+    "quem": "Lula",
+    "lado": "L"
+   }
+  ],
+  "src": [
+   [
+    "Decreto de armas de Lula (Congresso em Foco)",
+    "https://www.congressoemfoco.com.br/noticia/9475/lula-assina-decreto-de-limitacao-no-porte-de-armas"
+   ],
+   [
+    "Projetos contra o decreto (Congresso em Foco)",
+    "https://www.congressoemfoco.com.br/noticia/116574/comissao-de-seguranca-analisa-revogacao-de-decreto-que-restringiu-cacs"
+   ]
+  ]
+ },
+ {
+  "bloco": "Segurança, justiça e instituições",
+  "titulo": "Justiça: 8 de janeiro",
+  "hoje": "os condenados pela invasão das sedes dos Três Poderes em 8 de janeiro de 2023 cumprem as penas definidas pelo STF, maiores para quem teve participação maior. Parte dos réus fez acordo e cumpre pena alternativa.",
+  "p": "Essas pessoas deveriam:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Cumprir as penas definidas pela Justiça",
+    "muda": "Nada muda",
+    "ganho": "Mostra que atacar as instituições tem consequência e desestimula novos ataques",
+    "risco": "Penas longas para pessoas sem antecedentes e com participação pequena alimentam a sensação de injustiça e dividem o país",
+    "quem": "Lula",
+    "lado": "L"
+   },
+   {
+    "t": "Ser perdoadas ou ter as penas reduzidas por lei (anistia)",
+    "muda": "O Congresso aprova uma lei que apaga ou diminui as penas, e os condenados saem da prisão ou cumprem menos tempo",
+    "ganho": "Corrige penas vistas como exageradas e ajuda a pacificar o país",
+    "risco": "Sinaliza que atacar a democracia pode sair barato; o STF ainda pode derrubar a lei",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "Flávio e a anistia (InfoMoney)",
+    "https://www.infomoney.com.br/politica/flavio-diz-que-buscara-anistia-para-bolsonaro-ainda-durante-governo-de-transicao/"
+   ]
+  ]
+ },
+ {
+  "bloco": "Segurança, justiça e instituições",
+  "titulo": "Instituições: poderes do STF",
+  "hoje": "um ministro do STF pode, sozinho, suspender uma lei aprovada pelo Congresso ou um ato do presidente até o plenário julgar. Deputados e senadores são julgados criminalmente pelo próprio STF.",
+  "p": "Os poderes do STF deveriam:",
+  "conta": true,
+  "op": [
+   {
+    "t": "Continuar como estão",
+    "muda": "Nada muda",
+    "ganho": "O tribunal pode agir rápido para barrar uma lei ou um ato que fira a Constituição, e a independência entre os Poderes fica preservada",
+    "risco": "Um único ministro pode travar por meses uma decisão do Congresso ou do presidente",
+    "quem": "Lula (posição do PT; Lula não falou diretamente)",
+    "lado": "L"
+   },
+   {
+    "t": "Ser limitados",
+    "muda": "Um ministro sozinho não pode mais suspender lei do Congresso; deputados e senadores passam a ser julgados em outros tribunais; quem foi ministro de governo cumpre quarentena antes de ir para o STF",
+    "ganho": "Equilíbrio entre os Poderes: decisões grandes só com o plenário",
+    "risco": "Decisões urgentes demoram mais, e há quem veja nisso uma tentativa de enfraquecer o tribunal que julgou o 8 de janeiro",
+    "quem": "Flávio",
+    "lado": "F"
+   }
+  ],
+  "src": [
+   [
+    "Plano de Flávio para o STF (Gazeta do Povo)",
+    "https://www.gazetadopovo.com.br/eleicoes/2026/flavio-propoe-limitar-decisoes-monocraticas-stf-mudanca-regras-indicacao-ministros/"
+   ],
+   [
+    "Governistas e a PEC do STF (CNN)",
+    "https://www.cnnbrasil.com.br/politica/pec-que-limita-decisoes-monocraticas-no-stf-acende-sinal-de-alerta-entre-governistas-no-senado/"
+   ]
+  ]
+ }
 ];
-
-const OPTS = [[1, "Concordo"], [0, "Depende / não sei (não conta ponto)"], [-1, "Discordo"]];
+const CAND = { L: "Lula", F: "Flávio Bolsonaro" };
+const ans = Q.map(() => ({ v: null, w: false, open: {} }));
 let i = 0;
-const ans = Q.map(() => ({ v: null, w: false }));
 const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 function start() { $("intro").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); }
-function restart() { ans.forEach(a => { a.v = null; a.w = false; }); i = 0;
+function restart() { ans.forEach(a => { a.v = null; a.w = false; a.open = {}; }); i = 0;
   $("result").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); window.scrollTo(0, 0); }
 
 function render() {
   const q = Q[i], a = ans[i];
   $("qcount").textContent = `Pergunta ${i + 1} de ${Q.length}`;
-  $("qtheme").textContent = q.tema;
+  $("qbloco").textContent = q.bloco;
   $("qbar").style.width = `${(i / Q.length) * 100}%`;
-  $("qtext").textContent = q.t;
-  $("qhint").textContent = q.h || "";
-  $("qopts").innerHTML = "";
-  OPTS.forEach(([v, label]) => {
-    const b = document.createElement("button");
-    b.textContent = label;
-    if (a.v === v) b.className = "sel";
-    b.onclick = () => { a.v = v; render(); };
-    $("qopts").appendChild(b);
-  });
+  $("qtitulo").textContent = q.titulo;
+  $("qhoje").textContent = q.hoje;
+  $("qp").textContent = q.p;
+  $("qopts").innerHTML = q.op.map((o, k) => `
+    <div class="opt ${a.v === k ? "sel" : ""}" onclick="pick(${k})">
+      <div class="t">${"AB"[k]}. ${esc(o.t)}</div>
+      <div class="muda"><b>O que muda:</b> ${esc(o.muda)}</div>
+      ${a.open[k] ? `<div class="pc"><p class="g"><b>Ganho, segundo quem defende:</b> ${esc(o.ganho)}</p><p class="r"><b>Risco, segundo quem critica:</b> ${esc(o.risco)}</p></div>` : ""}
+      <button class="link" onclick="event.stopPropagation(); toggle(${k})">${a.open[k] ? "esconder prós e contras" : "ver prós e contras"}</button>
+    </div>`).join("");
+  $("qns").className = "ns" + (a.v === -1 ? " sel" : "");
+  $("qns").onclick = () => pick(-1);
   $("qweight").checked = a.w;
   $("qweight").onchange = e => { a.w = e.target.checked; };
+  $("qinfo").classList.toggle("hidden", q.conta);
   $("btnPrev").style.visibility = i === 0 ? "hidden" : "visible";
   $("btnNext").textContent = i === Q.length - 1 ? "Ver resultado" : "Próxima";
   $("btnNext").disabled = a.v === null;
-  $("btnNext").style.opacity = a.v === null ? .5 : 1;
 }
-function prev() { if (i > 0) { i--; render(); } }
+function pick(k) { ans[i].v = k; render(); }
+function toggle(k) { ans[i].open[k] = !ans[i].open[k]; render(); }
+function prev() { if (i > 0) { i--; render(); window.scrollTo(0, 0); } }
 function next() { if (ans[i].v === null) return; if (i < Q.length - 1) { i++; render(); window.scrollTo(0, 0); } else showResult(); }
 
-// Concordância por pergunta: mesma posição = 1, posição oposta = 0, candidato com posição indefinida = 0,5.
-// "Depende / não sei" fica fora da conta. Peso 2 se marcado.
+// Lado de quem respondeu em cada pergunta: L, F ou N (não sei). Só perguntas que contam entram no placar.
+function sideOf(q, a) { if (a.v === -1) return "N"; const l = q.op[a.v].lado; return l === "L" || l === "F" ? l : "N"; }
+
 function showResult() {
-  let max = 0, n = 0; const pts = { L: 0, F: 0 };
-  Q.forEach((q, k) => { const a = ans[k], w = a.w ? 2 : 1; if (a.v === 0) return; max += w; n++;
-    ["L", "F"].forEach(c => { pts[c] += w * (1 - Math.abs(a.v - q[c]) / 2); }); });
-  if (n === 0) {
-    $("resNote").textContent = "Você respondeu \"Depende / não sei\" em todas, então não dá para calcular. Veja abaixo a posição de cada candidato, tema por tema.";
+  const n = { L: 0, F: 0, N: 0 }; let total = 0;
+  Q.forEach((q, k) => { if (!q.conta) return; total++; n[sideOf(q, ans[k])]++; });
+  $("nL").textContent = n.L; $("nF").textContent = n.F; $("nN").textContent = n.N;
+  const diff = Math.abs(n.L - n.F), lead = n.L > n.F ? "L" : "F";
+  let v, t;
+  if (n.N >= Math.ceil(total / 2)) {
+    v = "Ainda em dúvida";
+    t = `Você respondeu "Não sei / depende" em ${n.N} das ${total} perguntas que contam. Vale ler os prós e contras dos temas em aberto e conversar sobre eles.`;
+  } else if (diff >= 3) {
+    v = `Mais alinhado a ${CAND[lead]}`;
+    t = `Nas perguntas em que você escolheu um lado, ${CAND[lead]} defende a mesma posição que você em ${n[lead]} e ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
+  } else {
+    v = "Dividido / terceira via";
+    t = "Suas opiniões se dividem entre os dois: você concorda com cada um em temas diferentes, e nenhum representa bem o conjunto do que você pensa.";
   }
-  const pct = { L: n ? Math.round(pts.L / max * 100) : 0, F: n ? Math.round(pts.F / max * 100) : 0 };
-  const order = ["L", "F"].sort((x, y) => pct[y] - pct[x] || CAND[x].localeCompare(CAND[y]));
-  $("scores").innerHTML = !n ? "" : order.map(c =>
-    `<div class="score ${c === "L" ? "a" : "b"}"><div class="name"><span>${CAND[c]}</span><span>${pct[c]}%</span></div>
-     <div class="bar"><div style="width:${pct[c]}%"></div></div></div>`).join("");
-  const diff = Math.abs(pct.L - pct.F);
-  const fora = Q.length - n;
-  const conta = fora ? ` ${n} de ${Q.length} perguntas entraram na conta; as ${fora} com "Depende / não sei" ficaram de fora.` : "";
-  if (n) $("resNote").textContent = (diff <= 10
-    ? "Diferença pequena: suas opiniões se dividem entre os dois. Vale olhar os temas que você marcou como importantes."
-    : `Suas respostas batem mais com ${CAND[order[0]]}.`) + conta;
-  const lbl = v => v === 1 ? "Concordo" : v === -1 ? "Discordo" : "Depende";
-  const pos = v => v === 1 ? "a favor" : v === -1 ? "contra" : "posição indefinida";
+  $("verdict").textContent = v; $("verdictTxt").textContent = t;
+  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas; as outras ${Q.length - total} são só para reflexão.`;
+  const label = (q, a) => a.v === -1 ? "Não sei / depende" : `${"AB"[a.v]}. ${q.op[a.v].t}`;
+  const quem = (q, a) => a.v === -1 ? "" : ` · quem defende: ${q.op[a.v].quem}`;
+  const imp = Q.map((q, k) => [q, ans[k]]).filter(([, a]) => a.w);
+  $("impCard").classList.toggle("hidden", !imp.length);
+  $("imp").innerHTML = imp.map(([q, a]) =>
+    `<p class="pos"><span class="star">★</span> <b>${esc(q.titulo)}:</b> ${esc(label(q, a))}<span class="muted">${esc(quem(q, a))}</span></p>`).join("");
   $("detail").innerHTML = Q.map((q, k) => {
     const a = ans[k];
-    const dL = Math.abs(a.v - q.L), dF = Math.abs(a.v - q.F);
-    const near = dL === dF ? "igual com os dois" : (dL < dF ? CAND.L : CAND.F);
-    return `<details><summary><b>${q.tema}:</b> ${q.t}<br><span class="muted">Você: ${lbl(a.v)}${a.w ? " (peso dobrado)" : ""} · mais perto de: ${near}</span></summary>
-      <p class="pos"><b>Lula</b> ${pos(q.L)}. ${q.lt}</p>
-      <p class="pos"><b>Flávio</b> ${pos(q.F)}. ${q.ft}</p>
-      <p class="pos muted">Fontes: ${q.src.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ")}</p></details>`;
+    return `<details><summary>${a.w ? '<span class="star">★</span> ' : ""}<b>${esc(q.titulo)}</b>${q.conta ? "" : " <span class='muted'>(só para reflexão)</span>"}<br>
+      <span class="muted">Você: ${esc(label(q, a))}${esc(quem(q, a))}</span></summary>
+      ${q.op.map((o, j) => `<p class="pos"><b>${"AB"[j]}. ${esc(o.t)}</b><br>Quem defende: ${esc(o.quem)}</p>`).join("")}
+      ${q.src.length ? `<p class="pos muted">Fontes: ${q.src.map(([nm, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(nm)}</a>`).join(" · ")}</p>` : ""}
+    </details>`;
   }).join("");
   $("quiz").classList.add("hidden"); $("result").classList.remove("hidden"); window.scrollTo(0, 0);
 }

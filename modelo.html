@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz do 2º turno</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --line: #e2e0db; --accent: #3a4a6b; --accent-soft: #e8ebf2;
+    --a: #8a5a2b; --b: #2b6a8a; --c: #7a7a80; --good: #2f6b45; --bad: #8a3b2b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #151517; --card: #1f1f22; --text: #ececee; --muted: #9a9aa2;
+      --line: #333338; --accent: #9fb0d6; --accent-soft: #2a2f3c; --a: #d9a46e; --b: #6fb6d9; --c: #9a9aa2;
+      --good: #7fc79a; --bad: #e39a86; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  h2 { font-size: 1.2rem; margin: 0 0 12px; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); font-size: .9rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); padding: 12px 16px; }
+  button.primary { background: var(--accent); color: var(--card); border-color: var(--accent); font-weight: 600; }
+  button:disabled { opacity: .45; cursor: default; }
+  .row { display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+  .tag { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0 16px; }
+  .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+  .hoje { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; margin-bottom: 14px; }
+  .hoje b { display: block; margin-bottom: 2px; }
+  .opt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt .t { font-weight: 600; margin-bottom: 6px; }
+  .opt .muda { font-size: .93rem; }
+  .opt .pc { font-size: .9rem; margin-top: 8px; }
+  .opt .pc p { margin: 6px 0 0; }
+  .opt .pc .g b { color: var(--good); }
+  .opt .pc .r b { color: var(--bad); }
+  .link { background: none; border: 0; padding: 6px 0 0; color: var(--accent); font-size: .9rem; text-decoration: underline; }
+  .ns { width: 100%; text-align: left; }
+  .ns.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 12px; }
+  label.weight input { width: 20px; height: 20px; }
+  .verdict { font-size: 1.35rem; font-weight: 700; margin: 4px 0 8px; }
+  .counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+  .counts div { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+  .counts b { display: block; font-size: 1.5rem; }
+  .cL b { color: var(--a); } .cF b { color: var(--b); } .cN b { color: var(--c); }
+  details { border-top: 1px solid var(--line); padding: 10px 0; }
+  summary { cursor: pointer; }
+  .pos { font-size: .92rem; margin: 6px 0 0; }
+  .star { color: var(--accent); font-weight: 700; }
+  ul.rules { margin: 0 0 12px; padding-left: 20px; }
+  ul.rules li { margin-bottom: 4px; }
+  a { color: var(--accent); }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<main>
+
+<section id="intro" class="card">
+  <h1>Em que você acredita?</h1>
+  <p>15 perguntas sobre temas do 2º turno de 2026 (25 de outubro), em três blocos: economia e trabalho; políticas sociais e direitos; segurança, justiça e instituições.</p>
+  <p>Cada pergunta mostra como é hoje e duas opções, com o que muda, o ganho que quem defende espera e o risco que quem critica aponta. Pense no que você acredita, não em quem defende. O nome dos candidatos só aparece no fim.</p>
+  <ul class="rules muted">
+    <li>Se não tiver opinião formada, responda "Não sei / depende". Essa resposta não conta para ninguém.</li>
+    <li>Duas perguntas ficam fora da contagem e aparecem só para reflexão: em uma a posição de um dos candidatos não está clara, e na outra os dois pensam igual.</li>
+    <li>As posições vêm dos planos de governo registrados no TSE e de declarações públicas, com fonte em cada tema.</li>
+  </ul>
+  <button class="primary" onclick="start()">Começar</button>
+</section>
+
+<section id="quiz" class="card hidden">
+  <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qbloco"></span></div>
+  <div class="bar"><div id="qbar"></div></div>
+  <h2 id="qtitulo"></h2>
+  <div class="hoje"><b>Como é hoje</b><span id="qhoje"></span></div>
+  <p><b id="qp"></b></p>
+  <div id="qopts"></div>
+  <button class="ns" id="qns">Não sei / depende (não conta para ninguém)</button>
+  <label class="weight"><input type="checkbox" id="qweight"> Esse tema é muito importante para mim</label>
+  <p class="muted hidden" id="qinfo" style="margin-top:10px">Esta pergunta não entra na contagem: é só para reflexão.</p>
+  <div class="row" style="margin-top:16px">
+    <button onclick="prev()" id="btnPrev">Voltar</button>
+    <button class="primary" onclick="next()" id="btnNext">Próxima</button>
+  </div>
+</section>
+
+<section id="result" class="hidden">
+  <div class="card">
+    <span class="tag">Seu resultado</span>
+    <div class="verdict" id="verdict"></div>
+    <p id="verdictTxt"></p>
+    <div class="counts">
+      <div class="cL"><b id="nL">0</b>Lula</div>
+      <div class="cF"><b id="nF">0</b>Flávio Bolsonaro</div>
+      <div class="cN"><b id="nN">0</b>Não sei</div>
+    </div>
+    <p class="muted" id="countNote"></p>
+    <button onclick="restart()">Refazer</button>
+  </div>
+  <div class="card hidden" id="impCard">
+    <h2>Os temas mais importantes para você</h2>
+    <div id="imp"></div>
+  </div>
+  <div class="card">
+    <h2>Tema por tema</h2>
+    <p class="muted">Toque em cada tema para ver quem defende cada opção e a fonte.</p>
+    <div id="detail"></div>
+  </div>
+</section>
+
+</main>
+<script>
+const Q = /*DADOS*/[];
+const CAND = { L: "Lula", F: "Flávio Bolsonaro" };
+const ans = Q.map(() => ({ v: null, w: false, open: {} }));
+let i = 0;
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function start() { $("intro").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); }
+function restart() { ans.forEach(a => { a.v = null; a.w = false; a.open = {}; }); i = 0;
+  $("result").classList.add("hidden"); $("quiz").classList.remove("hidden"); render(); window.scrollTo(0, 0); }
+
+function render() {
+  const q = Q[i], a = ans[i];
+  $("qcount").textContent = `Pergunta ${i + 1} de ${Q.length}`;
+  $("qbloco").textContent = q.bloco;
+  $("qbar").style.width = `${(i / Q.length) * 100}%`;
+  $("qtitulo").textContent = q.titulo;
+  $("qhoje").textContent = q.hoje;
+  $("qp").textContent = q.p;
+  $("qopts").innerHTML = q.op.map((o, k) => `
+    <div class="opt ${a.v === k ? "sel" : ""}" onclick="pick(${k})">
+      <div class="t">${"AB"[k]}. ${esc(o.t)}</div>
+      <div class="muda"><b>O que muda:</b> ${esc(o.muda)}</div>
+      ${a.open[k] ? `<div class="pc"><p class="g"><b>Ganho, segundo quem defende:</b> ${esc(o.ganho)}</p><p class="r"><b>Risco, segundo quem critica:</b> ${esc(o.risco)}</p></div>` : ""}
+      <button class="link" onclick="event.stopPropagation(); toggle(${k})">${a.open[k] ? "esconder prós e contras" : "ver prós e contras"}</button>
+    </div>`).join("");
+  $("qns").className = "ns" + (a.v === -1 ? " sel" : "");
+  $("qns").onclick = () => pick(-1);
+  $("qweight").checked = a.w;
+  $("qweight").onchange = e => { a.w = e.target.checked; };
+  $("qinfo").classList.toggle("hidden", q.conta);
+  $("btnPrev").style.visibility = i === 0 ? "hidden" : "visible";
+  $("btnNext").textContent = i === Q.length - 1 ? "Ver resultado" : "Próxima";
+  $("btnNext").disabled = a.v === null;
+}
+function pick(k) { ans[i].v = k; render(); }
+function toggle(k) { ans[i].open[k] = !ans[i].open[k]; render(); }
+function prev() { if (i > 0) { i--; render(); window.scrollTo(0, 0); } }
+function next() { if (ans[i].v === null) return; if (i < Q.length - 1) { i++; render(); window.scrollTo(0, 0); } else showResult(); }
+
+// Lado de quem respondeu em cada pergunta: L, F ou N (não sei). Só perguntas que contam entram no placar.
+function sideOf(q, a) { if (a.v === -1) return "N"; const l = q.op[a.v].lado; return l === "L" || l === "F" ? l : "N"; }
+
+function showResult() {
+  const n = { L: 0, F: 0, N: 0 }; let total = 0;
+  Q.forEach((q, k) => { if (!q.conta) return; total++; n[sideOf(q, ans[k])]++; });
+  $("nL").textContent = n.L; $("nF").textContent = n.F; $("nN").textContent = n.N;
+  const diff = Math.abs(n.L - n.F), lead = n.L > n.F ? "L" : "F";
+  let v, t;
+  if (n.N >= Math.ceil(total / 2)) {
+    v = "Ainda em dúvida";
+    t = `Você respondeu "Não sei / depende" em ${n.N} das ${total} perguntas que contam. Vale ler os prós e contras dos temas em aberto e conversar sobre eles.`;
+  } else if (diff >= 3) {
+    v = `Mais alinhado a ${CAND[lead]}`;
+    t = `Nas perguntas em que você escolheu um lado, ${CAND[lead]} defende a mesma posição que você em ${n[lead]} e ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
+  } else {
+    v = "Dividido / terceira via";
+    t = "Suas opiniões se dividem entre os dois: você concorda com cada um em temas diferentes, e nenhum representa bem o conjunto do que você pensa.";
+  }
+  $("verdict").textContent = v; $("verdictTxt").textContent = t;
+  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas; as outras ${Q.length - total} são só para reflexão.`;
+  const label = (q, a) => a.v === -1 ? "Não sei / depende" : `${"AB"[a.v]}. ${q.op[a.v].t}`;
+  const quem = (q, a) => a.v === -1 ? "" : ` · quem defende: ${q.op[a.v].quem}`;
+  const imp = Q.map((q, k) => [q, ans[k]]).filter(([, a]) => a.w);
+  $("impCard").classList.toggle("hidden", !imp.length);
+  $("imp").innerHTML = imp.map(([q, a]) =>
+    `<p class="pos"><span class="star">★</span> <b>${esc(q.titulo)}:</b> ${esc(label(q, a))}<span class="muted">${esc(quem(q, a))}</span></p>`).join("");
+  $("detail").innerHTML = Q.map((q, k) => {
+    const a = ans[k];
+    return `<details><summary>${a.w ? '<span class="star">★</span> ' : ""}<b>${esc(q.titulo)}</b>${q.conta ? "" : " <span class='muted'>(só para reflexão)</span>"}<br>
+      <span class="muted">Você: ${esc(label(q, a))}${esc(quem(q, a))}</span></summary>
+      ${q.op.map((o, j) => `<p class="pos"><b>${"AB"[j]}. ${esc(o.t)}</b><br>Quem defende: ${esc(o.quem)}</p>`).join("")}
+      ${q.src.length ? `<p class="pos muted">Fontes: ${q.src.map(([nm, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(nm)}</a>`).join(" · ")}</p>` : ""}
+    </details>`;
+  }).join("");
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden"); window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
