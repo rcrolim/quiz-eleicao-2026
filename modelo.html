@@ -42,7 +42,11 @@
   .opt .pc p { margin: 6px 0 0; }
   .opt .pc .g b { color: var(--good); }
   .opt .pc .r b { color: var(--bad); }
-  .link { background: none; border: 0; padding: 6px 0 0; color: var(--accent); font-size: .9rem; text-decoration: underline; }
+  .pcbtn { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 10px;
+    padding: 9px 14px; border-radius: 99px; border: 1px solid var(--accent); background: var(--accent-soft); font-size: .92rem; font-weight: 600; color: var(--accent); }
+  .pcbtn .chev { font-size: 1.1rem; line-height: 1; transition: transform .15s; }
+  .pcbtn.on .chev { transform: rotate(180deg); }
+  .opt .pc { background: var(--bg); border-radius: 10px; padding: 4px 12px 10px; }
   .ns { width: 100%; text-align: left; }
   .ns.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
   label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 12px; }
@@ -67,26 +71,19 @@
 
 <section id="intro" class="card">
   <h1>Em que você acredita?</h1>
-  <p>15 perguntas sobre temas do 2º turno de 2026 (25 de outubro), em três blocos: economia e trabalho; políticas sociais e direitos; segurança, justiça e instituições.</p>
-  <p>Cada pergunta mostra como é hoje e duas opções, com o que muda, o ganho que quem defende espera e o risco que quem critica aponta. Pense no que você acredita, não em quem defende. O nome dos candidatos só aparece no fim.</p>
-  <ul class="rules muted">
-    <li>Se não tiver opinião formada, responda "Não sei / depende". Essa resposta não conta para ninguém.</li>
-    <li>Duas perguntas ficam fora da contagem e aparecem só para reflexão: em uma a posição de um dos candidatos não está clara, e na outra os dois pensam igual.</li>
-    <li>As posições vêm dos planos de governo registrados no TSE e de declarações públicas, com fonte em cada tema.</li>
-  </ul>
+  <p>15 perguntas sobre temas do 2º turno. Escolha o que você pensa e, no fim, veja com qual candidato você mais concorda.</p>
   <button class="primary" onclick="start()">Começar</button>
 </section>
 
 <section id="quiz" class="card hidden">
   <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qbloco"></span></div>
   <div class="bar"><div id="qbar"></div></div>
-  <h2 id="qtitulo"></h2>
+  <h2 id="qp"></h2>
   <div class="hoje"><b>Como é hoje</b><span id="qhoje"></span></div>
-  <p><b id="qp"></b></p>
   <div id="qopts"></div>
-  <button class="ns" id="qns">Não sei / depende (não conta para ninguém)</button>
-  <label class="weight"><input type="checkbox" id="qweight"> Esse tema é muito importante para mim</label>
-  <p class="muted hidden" id="qinfo" style="margin-top:10px">Esta pergunta não entra na contagem: é só para reflexão.</p>
+  <button class="ns" id="qns">Não sei / depende</button>
+  <label class="weight"><input type="checkbox" id="qweight"> Tema muito importante para mim</label>
+  <p class="muted hidden" id="qinfo" style="margin-top:10px">Só para reflexão: esta pergunta não entra na contagem.</p>
   <div class="row" style="margin-top:16px">
     <button onclick="prev()" id="btnPrev">Voltar</button>
     <button class="primary" onclick="next()" id="btnNext">Próxima</button>
@@ -112,7 +109,7 @@
   </div>
   <div class="card">
     <h2>Tema por tema</h2>
-    <p class="muted">Toque em cada tema para ver quem defende cada opção e a fonte.</p>
+    <p class="muted">Toque num tema para ver quem defende cada opção.</p>
     <div id="detail"></div>
   </div>
 </section>
@@ -135,15 +132,14 @@ function render() {
   $("qcount").textContent = `Pergunta ${i + 1} de ${Q.length}`;
   $("qbloco").textContent = q.bloco;
   $("qbar").style.width = `${(i / Q.length) * 100}%`;
-  $("qtitulo").textContent = q.titulo;
   $("qhoje").textContent = q.hoje;
   $("qp").textContent = q.p;
   $("qopts").innerHTML = q.op.map((o, k) => `
     <div class="opt ${a.v === k ? "sel" : ""}" onclick="pick(${k})">
       <div class="t">${"AB"[k]}. ${esc(o.t)}</div>
-      <div class="muda"><b>O que muda:</b> ${esc(o.muda)}</div>
-      ${a.open[k] ? `<div class="pc"><p class="g"><b>Ganho, segundo quem defende:</b> ${esc(o.ganho)}</p><p class="r"><b>Risco, segundo quem critica:</b> ${esc(o.risco)}</p></div>` : ""}
-      <button class="link" onclick="event.stopPropagation(); toggle(${k})">${a.open[k] ? "esconder prós e contras" : "ver prós e contras"}</button>
+      <div class="muda muted">${esc(o.muda)}</div>
+      <button class="pcbtn ${a.open[k] ? "on" : ""}" onclick="event.stopPropagation(); toggle(${k})" aria-expanded="${!!a.open[k]}"><span>${a.open[k] ? "Esconder prós e contras" : "Ver prós e contras"}</span><span class="chev">▾</span></button>
+      ${a.open[k] ? `<div class="pc"><p class="g"><b>A favor:</b> ${esc(o.ganho)}</p><p class="r"><b>Contra:</b> ${esc(o.risco)}</p></div>` : ""}
     </div>`).join("");
   $("qns").className = "ns" + (a.v === -1 ? " sel" : "");
   $("qns").onclick = () => pick(-1);
@@ -170,16 +166,16 @@ function showResult() {
   let v, t;
   if (n.N >= Math.ceil(total / 2)) {
     v = "Ainda em dúvida";
-    t = `Você respondeu "Não sei / depende" em ${n.N} das ${total} perguntas que contam. Vale ler os prós e contras dos temas em aberto e conversar sobre eles.`;
+    t = `"Não sei" em ${n.N} das ${total} perguntas. Vale abrir os prós e contras desses temas.`;
   } else if (diff >= 3) {
     v = `Mais alinhado a ${CAND[lead]}`;
-    t = `Nas perguntas em que você escolheu um lado, ${CAND[lead]} defende a mesma posição que você em ${n[lead]} e ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
+    t = `Você pensa como ${CAND[lead]} em ${n[lead]} temas, e como ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
   } else {
     v = "Dividido / terceira via";
-    t = "Suas opiniões se dividem entre os dois: você concorda com cada um em temas diferentes, e nenhum representa bem o conjunto do que você pensa.";
+    t = "Você concorda com cada um em temas diferentes, e nenhum dos dois representa bem o que você pensa.";
   }
   $("verdict").textContent = v; $("verdictTxt").textContent = t;
-  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas; as outras ${Q.length - total} são só para reflexão.`;
+  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas. "Não sei" não conta para ninguém.`;
   const label = (q, a) => a.v === -1 ? "Não sei / depende" : `${"AB"[a.v]}. ${q.op[a.v].t}`;
   const quem = (q, a) => a.v === -1 ? "" : ` · quem defende: ${q.op[a.v].quem}`;
   const imp = Q.map((q, k) => [q, ans[k]]).filter(([, a]) => a.w);

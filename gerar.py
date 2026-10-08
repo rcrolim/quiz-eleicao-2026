@@ -71,7 +71,7 @@ def ler():
                 opcoes.append({"t": re.sub(r"^[AB]\. ", "", c[0]), "muda": c[1], "ganho": c[2],
                                "risco": c[3], "quem": c[4], "lado": lado(c[4])})
         src = next((v for k, v in FONTES.items() if k.lower() in titulo.lower()), [])
-        perguntas.append({"bloco": bloco, "titulo": titulo, "hoje": limpa(hoje), "p": limpa(perg),
+        perguntas.append({"bloco": bloco, "titulo": titulo, "hoje": (lambda h: h[:1].upper() + h[1:])(limpa(hoje)), "p": limpa(perg),
                           "conta": conta, "op": opcoes, "src": src})
     assert len(perguntas) == 15, len(perguntas)
     return perguntas

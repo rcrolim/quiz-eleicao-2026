@@ -42,7 +42,11 @@
   .opt .pc p { margin: 6px 0 0; }
   .opt .pc .g b { color: var(--good); }
   .opt .pc .r b { color: var(--bad); }
-  .link { background: none; border: 0; padding: 6px 0 0; color: var(--accent); font-size: .9rem; text-decoration: underline; }
+  .pcbtn { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 10px;
+    padding: 9px 14px; border-radius: 99px; border: 1px solid var(--accent); background: var(--accent-soft); font-size: .92rem; font-weight: 600; color: var(--accent); }
+  .pcbtn .chev { font-size: 1.1rem; line-height: 1; transition: transform .15s; }
+  .pcbtn.on .chev { transform: rotate(180deg); }
+  .opt .pc { background: var(--bg); border-radius: 10px; padding: 4px 12px 10px; }
   .ns { width: 100%; text-align: left; }
   .ns.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
   label.weight { display: flex; gap: 8px; align-items: center; font-size: .95rem; margin-top: 12px; }
@@ -67,26 +71,19 @@
 
 <section id="intro" class="card">
   <h1>Em que você acredita?</h1>
-  <p>15 perguntas sobre temas do 2º turno de 2026 (25 de outubro), em três blocos: economia e trabalho; políticas sociais e direitos; segurança, justiça e instituições.</p>
-  <p>Cada pergunta mostra como é hoje e duas opções, com o que muda, o ganho que quem defende espera e o risco que quem critica aponta. Pense no que você acredita, não em quem defende. O nome dos candidatos só aparece no fim.</p>
-  <ul class="rules muted">
-    <li>Se não tiver opinião formada, responda "Não sei / depende". Essa resposta não conta para ninguém.</li>
-    <li>Duas perguntas ficam fora da contagem e aparecem só para reflexão: em uma a posição de um dos candidatos não está clara, e na outra os dois pensam igual.</li>
-    <li>As posições vêm dos planos de governo registrados no TSE e de declarações públicas, com fonte em cada tema.</li>
-  </ul>
+  <p>15 perguntas sobre temas do 2º turno. Escolha o que você pensa e, no fim, veja com qual candidato você mais concorda.</p>
   <button class="primary" onclick="start()">Começar</button>
 </section>
 
 <section id="quiz" class="card hidden">
   <div class="row"><span class="tag" id="qcount"></span><span class="tag" id="qbloco"></span></div>
   <div class="bar"><div id="qbar"></div></div>
-  <h2 id="qtitulo"></h2>
+  <h2 id="qp"></h2>
   <div class="hoje"><b>Como é hoje</b><span id="qhoje"></span></div>
-  <p><b id="qp"></b></p>
   <div id="qopts"></div>
-  <button class="ns" id="qns">Não sei / depende (não conta para ninguém)</button>
-  <label class="weight"><input type="checkbox" id="qweight"> Esse tema é muito importante para mim</label>
-  <p class="muted hidden" id="qinfo" style="margin-top:10px">Esta pergunta não entra na contagem: é só para reflexão.</p>
+  <button class="ns" id="qns">Não sei / depende</button>
+  <label class="weight"><input type="checkbox" id="qweight"> Tema muito importante para mim</label>
+  <p class="muted hidden" id="qinfo" style="margin-top:10px">Só para reflexão: esta pergunta não entra na contagem.</p>
   <div class="row" style="margin-top:16px">
     <button onclick="prev()" id="btnPrev">Voltar</button>
     <button class="primary" onclick="next()" id="btnNext">Próxima</button>
@@ -112,7 +109,7 @@
   </div>
   <div class="card">
     <h2>Tema por tema</h2>
-    <p class="muted">Toque em cada tema para ver quem defende cada opção e a fonte.</p>
+    <p class="muted">Toque num tema para ver quem defende cada opção.</p>
     <div id="detail"></div>
   </div>
 </section>
@@ -123,23 +120,23 @@ const Q = [
  {
   "bloco": "Economia e trabalho",
   "titulo": "Trabalho: escala 6x1",
-  "hoje": "a lei permite até 44 horas por semana, com uma folga. A escala 6x1 é comum no comércio e nos serviços.",
+  "hoje": "Até 44 horas por semana, com uma folga.",
   "p": "Sobre a jornada de trabalho:",
   "conta": true,
   "op": [
    {
-    "t": "Uma lei deveria acabar com a escala 6x1 e limitar a semana a 40 horas, sem cortar salário",
-    "muda": "Muda a Constituição: duas folgas por semana; a empresa reorganiza turnos ou contrata mais gente",
-    "ganho": "Mais descanso, saúde e tempo com a família",
-    "risco": "Custo maior para a empresa, sobretudo a pequena, que pode virar demissão, preço mais alto ou trabalho sem carteira",
+    "t": "Lei acaba com a 6x1: 40 horas, sem cortar salário",
+    "muda": "Duas folgas por semana; empresas reorganizam turnos",
+    "ganho": "Mais descanso e tempo com a família",
+    "risco": "Custo maior pode virar demissão ou preço mais alto",
     "quem": "Lula",
     "lado": "L"
    },
    {
-    "t": "Patrão e empregado deveriam combinar a jornada entre si",
-    "muda": "Continua o limite atual, e cada setor ajusta a escala em acordo com os trabalhadores",
-    "ganho": "Cada setor faz o que cabe na sua realidade, sem uma regra única para todos",
-    "risco": "O trabalhador tem pouco poder para negociar, e a 6x1 continua onde já existe",
+    "t": "Sem lei nova: cada setor negocia a escala",
+    "muda": "Continua o limite de 44 horas e uma folga",
+    "ganho": "Cada setor se adapta à sua realidade",
+    "risco": "O trabalhador tem pouco poder para negociar",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -158,23 +155,23 @@ const Q = [
  {
   "bloco": "Economia e trabalho",
   "titulo": "Economia: estatais",
-  "hoje": "o governo controla várias empresas, como Correios, Caixa e Petrobras.",
-  "p": "Empresas públicas, como os Correios, deveriam:",
+  "hoje": "O governo controla empresas como Correios, Caixa e Petrobras.",
+  "p": "Empresas como os Correios deveriam:",
   "conta": true,
   "op": [
    {
     "t": "Continuar com o governo",
-    "muda": "Nada muda: o governo segue dono, define preço e atendimento",
-    "ganho": "O serviço chega a lugares que não dão lucro, como o interior, e setores estratégicos ficam sob controle do país",
-    "risco": "Quando a empresa dá prejuízo, quem paga é o dinheiro público, e os cargos viram moeda de troca política",
+    "muda": "Nada muda",
+    "ganho": "Atende lugares que não dão lucro",
+    "risco": "O prejuízo é pago com dinheiro público",
     "quem": "Lula",
     "lado": "L"
    },
    {
-    "t": "Ser vendidas à iniciativa privada, analisando caso a caso",
-    "muda": "Uma empresa privada compra e opera o serviço, sob regras de uma agência do governo; o dinheiro da venda entra no caixa",
-    "ganho": "Mais eficiência, menos uso político e dinheiro para o governo",
-    "risco": "Tarifa mais alta, e o atendimento em regiões que não dão lucro pode piorar",
+    "t": "Ser vendidas, caso a caso",
+    "muda": "Uma empresa privada opera, sob regras do governo",
+    "ganho": "Mais eficiência e menos uso político",
+    "risco": "Tarifa mais alta onde não dá lucro",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -193,23 +190,23 @@ const Q = [
  {
   "bloco": "Economia e trabalho",
   "titulo": "Economia: contas do governo",
-  "hoje": "o gasto do governo pode crescer até 2,5% acima da inflação por ano. A dívida é alta, e os juros que o governo paga sobre ela pesam no orçamento.",
-  "p": "Para equilibrar as contas do governo, o caminho principal deveria ser:",
+  "hoje": "O gasto pode crescer até 2,5% acima da inflação por ano, e a dívida pesa em juros.",
+  "p": "Para equilibrar as contas, o caminho principal é:",
   "conta": true,
   "op": [
    {
-    "t": "Cortar gastos da máquina pública",
-    "muda": "Fechar ministérios (Flávio fala em pelo menos 10), cortar cargos de indicação política, salários acima do teto e fraudes em benefícios. A equipe dele fala em cerca de R$ 300 bilhões",
-    "ganho": "Dívida menor leva a juros menores, e o crédito fica mais barato para todo mundo",
-    "risco": "Corte desse tamanho não sai só de cargos e mordomias e acaba atingindo serviços e investimentos",
+    "t": "Cortar gastos do governo",
+    "muda": "Menos ministérios, cargos políticos, supersalários e fraudes",
+    "ganho": "Dívida menor, juros mais baixos",
+    "risco": "Um corte grande acaba atingindo serviços",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "Cobrar mais imposto de quem ganha muito e manter os gastos",
-    "muda": "O gasto segue dentro da regra atual, e o dinheiro extra vem de impostos sobre altas rendas, como o imposto mínimo para quem ganha acima de R$ 50 mil por mês, em vigor desde 2026",
-    "ganho": "Mantém os serviços, e quem ganha mais contribui mais",
-    "risco": "Imposto alto pode afastar investimento, e a dívida continua crescendo",
+    "t": "Cobrar mais de quem ganha muito",
+    "muda": "Mais imposto sobre altas rendas, mantendo os gastos",
+    "ganho": "Mantém os serviços; quem ganha mais paga mais",
+    "risco": "Afasta investimento, e a dívida segue crescendo",
     "quem": "Lula",
     "lado": "L"
    }
@@ -228,23 +225,23 @@ const Q = [
  {
   "bloco": "Economia e trabalho",
   "titulo": "Meio ambiente: licença para obras",
-  "hoje": "uma obra (estrada, fábrica, barragem) só começa com licença ambiental emitida.",
-  "p": "Quando o órgão ambiental demora para analisar uma obra:",
+  "hoje": "Uma obra só começa com licença ambiental.",
+  "p": "Se a análise ambiental de uma obra demora:",
   "conta": true,
   "op": [
    {
-    "t": "A obra deve esperar a análise terminar, mesmo que demore",
+    "t": "A obra espera a análise",
     "muda": "Nada muda",
-    "ganho": "Nenhuma obra começa sem que se saiba o dano que ela pode causar",
-    "risco": "A demora de anos trava estradas, energia e empregos",
+    "ganho": "Nenhuma obra começa sem saber o dano",
+    "risco": "Obras e empregos travam por anos",
     "quem": "Lula",
     "lado": "L"
    },
    {
-    "t": "A licença deve sair automaticamente depois de um prazo",
-    "muda": "Se o órgão não responder no prazo da lei, a licença vale como concedida e a obra pode começar",
-    "ganho": "A obra sai mais rápido, e o órgão é obrigado a cumprir prazo",
-    "risco": "Uma obra com dano sério pode passar sem análise só porque o órgão está sem gente",
+    "t": "A licença sai sozinha após um prazo",
+    "muda": "Sem resposta no prazo, a obra pode começar",
+    "ganho": "Obras andam mais rápido",
+    "risco": "Obra perigosa pode passar sem análise",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -263,23 +260,23 @@ const Q = [
  {
   "bloco": "Economia e trabalho",
   "titulo": "Aposentadoria",
-  "hoje": "a aposentadoria de um salário mínimo sobe junto com ele: inflação mais o crescimento da economia, até 2,5% acima da inflação.",
-  "p": "A aposentadoria de quem recebe um salário mínimo deveria:",
+  "hoje": "A aposentadoria de um salário mínimo sobe acima da inflação, junto com ele.",
+  "p": "Essa aposentadoria deveria:",
   "conta": false,
   "op": [
    {
-    "t": "Subir todo ano acima da inflação, junto com o salário mínimo",
+    "t": "Continuar subindo acima da inflação",
     "muda": "Nada muda",
-    "ganho": "O aposentado mais pobre ganha poder de compra ano a ano",
-    "risco": "O gasto do INSS cresce rápido e pressiona as contas do governo",
+    "ganho": "O aposentado pobre ganha poder de compra",
+    "risco": "O gasto do INSS cresce rápido",
     "quem": "Lula",
     "lado": "L"
    },
    {
     "t": "Subir só pela inflação",
-    "muda": "A aposentadoria mantém o poder de compra, mas deixa de ganhar o aumento extra",
-    "ganho": "Grande economia para o governo, que ajuda a controlar a dívida",
-    "risco": "O aposentado mais pobre fica para trás em relação a quem está trabalhando",
+    "muda": "Mantém o poder de compra, sem aumento extra",
+    "ganho": "Grande economia para o governo",
+    "risco": "O aposentado fica para trás de quem trabalha",
     "quem": "Flávio: não está claro",
     "lado": "U"
    }
@@ -294,23 +291,23 @@ const Q = [
  {
   "bloco": "Políticas sociais e direitos",
   "titulo": "Costumes: aborto",
-  "hoje": "aborto é crime, com três exceções: gravidez por estupro, risco de vida da mulher e bebê sem cérebro (anencefalia).",
-  "p": "Fora dessas exceções, o aborto deveria ser tratado:",
+  "hoje": "É crime, exceto em caso de estupro, risco de vida da mulher e bebê sem cérebro.",
+  "p": "Fora dessas exceções, o aborto deveria ser:",
   "conta": true,
   "op": [
    {
-    "t": "Como crime, como é hoje",
-    "muda": "Nada muda: a mulher pode ter pena de 1 a 3 anos, e quem faz o procedimento também responde",
-    "ganho": "Protege a vida desde a concepção e desestimula o aborto",
-    "risco": "Os abortos continuam acontecendo escondidos, e quem morre por aborto inseguro são sobretudo mulheres pobres",
+    "t": "Crime, como hoje",
+    "muda": "A mulher pode pegar de 1 a 3 anos",
+    "ganho": "Protege a vida desde a concepção",
+    "risco": "Abortos seguem escondidos e matam mulheres pobres",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "Como questão de saúde pública",
-    "muda": "O foco passa a ser atendimento no SUS, prevenção e acompanhamento. Esse caminho costuma vir junto com deixar de punir a mulher, como pede uma ação no STF que libera o aborto até 12 semanas",
-    "ganho": "Menos mortes por aborto inseguro e mais prevenção de gravidez indesejada",
-    "risco": "Pode aumentar o número de abortos e vai contra a convicção religiosa de boa parte da população",
+    "t": "Tratado como saúde pública",
+    "muda": "Foco em atendimento e prevenção, em geral sem punir a mulher",
+    "ganho": "Menos mortes por aborto inseguro",
+    "risco": "Pode aumentar o número de abortos",
     "quem": "Lula",
     "lado": "L"
    }
@@ -329,23 +326,23 @@ const Q = [
  {
   "bloco": "Políticas sociais e direitos",
   "titulo": "Direitos: cotas",
-  "hoje": "universidades federais e concursos públicos reservam vagas para quem estudou em escola pública e tem baixa renda, e parte dessas vagas é para pretos, pardos e indígenas. A Lei de Cotas foi renovada em 2023.",
-  "p": "As cotas em universidades e concursos públicos deveriam levar em conta:",
+  "hoje": "Universidades e concursos federais reservam vagas por renda, escola pública e cor.",
+  "p": "As cotas deveriam considerar:",
   "conta": true,
   "op": [
    {
-    "t": "Renda, escola pública e também cor ou raça, como é hoje",
+    "t": "Renda, escola pública e cor, como hoje",
     "muda": "Nada muda",
-    "ganho": "Corrige uma desigualdade que a renda sozinha não explica: entre pessoas com a mesma renda, negros ainda enfrentam mais barreiras",
-    "risco": "Quem tem a mesma renda e não entra na cota racial perde a vaga, e há casos de fraude na autodeclaração",
+    "ganho": "Corrige barreiras que a renda sozinha não explica",
+    "risco": "Pessoas com a mesma renda concorrem com regras diferentes",
     "quem": "Lula",
     "lado": "L"
    },
    {
-    "t": "Só renda e escola pública (cota social)",
-    "muda": "Acabam as vagas reservadas por cor; continua a reserva para quem estudou em escola pública e tem baixa renda",
-    "ganho": "Ajuda todos os pobres sem separar por cor, e como a maioria dos pobres é negra, eles continuam sendo atendidos",
-    "risco": "A presença de negros nas universidades e no serviço público pode cair",
+    "t": "Só renda e escola pública",
+    "muda": "Acabam as vagas por cor",
+    "ganho": "Ajuda todos os pobres, sem separar por cor",
+    "risco": "Menos negros na universidade e no serviço público",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -364,23 +361,23 @@ const Q = [
  {
   "bloco": "Políticas sociais e direitos",
   "titulo": "Educação: escolas cívico-militares",
-  "hoje": "o programa federal acabou em 2023. Alguns estados, como São Paulo e Paraná, mantêm programas próprios.",
-  "p": "As escolas cívico-militares (militares cuidando da disciplina, professores civis) deveriam:",
+  "hoje": "O programa federal acabou em 2023; alguns estados mantêm o seu.",
+  "p": "Escolas com militares cuidando da disciplina deveriam:",
   "conta": true,
   "op": [
    {
-    "t": "Ter um programa do governo federal para ampliar o modelo",
-    "muda": "O governo federal paga e cede militares para as escolas que aderirem, como no programa de 2019 a 2023",
-    "ganho": "Mais disciplina e segurança na escola, o que ajuda no aprendizado",
-    "risco": "Custo de pagar militares, que poderia ir para professores, e um modelo rígido que não serve para todo aluno",
+    "t": "Ter um programa federal para crescer",
+    "muda": "O governo federal paga e cede militares",
+    "ganho": "Mais disciplina e segurança na escola",
+    "risco": "Tira dinheiro que poderia ir para professores",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "Ficar a critério de estados e municípios",
+    "t": "Ficar a cargo dos estados",
     "muda": "Nada muda",
-    "ganho": "O dinheiro federal vai para professores e estrutura, e cada estado decide se quer o modelo",
-    "risco": "Estados sem dinheiro ficam sem essa opção",
+    "ganho": "A verba federal vai para professor e estrutura",
+    "risco": "Estado sem dinheiro fica sem a opção",
     "quem": "Lula",
     "lado": "L"
    }
@@ -399,23 +396,23 @@ const Q = [
  {
   "bloco": "Políticas sociais e direitos",
   "titulo": "Redes sociais",
-  "hoje": "desde 2025, por decisão do STF, as redes podem ser punidas se não apagarem conteúdo ilegal depois de avisadas, mesmo sem ordem de juiz. Para ofensa pessoal (calúnia, difamação), ainda precisa de ordem de juiz.",
-  "p": "Sobre o que circula nas redes sociais:",
+  "hoje": "As redes podem ser punidas se não apagarem conteúdo ilegal depois de avisadas; ofensa pessoal ainda exige ordem de juiz.",
+  "p": "As redes sociais deveriam apagar publicações:",
   "conta": true,
   "op": [
    {
-    "t": "As redes só deveriam apagar publicações com ordem de um juiz",
-    "muda": "Volta a regra anterior a 2025: a plataforma só responde se descumprir uma decisão judicial",
-    "ganho": "Ninguém tem opinião apagada sem passar por um juiz, o que reduz o risco de censura política",
-    "risco": "Golpes, fraudes e ataques ficam no ar por dias até sair uma decisão",
+    "t": "Só com ordem de juiz",
+    "muda": "Volta a regra anterior a 2025",
+    "ganho": "Menos risco de censura",
+    "risco": "Golpes e ataques ficam no ar por dias",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "As redes deveriam ser obrigadas a apagar ataques à democracia, discurso de ódio e golpes, mesmo sem ordem de juiz",
-    "muda": "Mantém e amplia a regra atual",
-    "ganho": "Conteúdo criminoso sai do ar rápido, antes de se espalhar",
-    "risco": "Para não ser punida, a plataforma tende a apagar demais, inclusive opinião legítima; e alguém precisa decidir o que é \"ataque à democracia\"",
+    "t": "Também sem juiz, em casos graves",
+    "muda": "Mantém a regra atual para ódio, golpes e ataques à democracia",
+    "ganho": "Conteúdo criminoso sai do ar rápido",
+    "risco": "As plataformas apagam demais, até opinião",
     "quem": "Lula",
     "lado": "L"
    }
@@ -438,23 +435,23 @@ const Q = [
  {
   "bloco": "Políticas sociais e direitos",
   "titulo": "Mulheres: misoginia",
-  "hoje": "ofensa ou ataque a mulher é punido como injúria, ameaça, violência ou pela Lei Maria da Penha.",
-  "p": "Ofender, discriminar ou incitar ódio contra mulheres por serem mulheres (misoginia) deveria:",
+  "hoje": "Ofensa a mulher é punida como injúria, ameaça ou pela Lei Maria da Penha.",
+  "p": "Ódio contra mulheres, por serem mulheres, deveria:",
   "conta": false,
   "op": [
    {
-    "t": "Virar um crime próprio, como o racismo",
-    "muda": "A misoginia entra na lei do racismo, com pena de prisão própria",
-    "ganho": "Reconhece o ódio contra a mulher como crime específico e pune ataques que hoje escapam",
-    "risco": "Uma definição ampla pode punir piada ou opinião",
+    "t": "Virar crime próprio, como o racismo",
+    "muda": "Entra na lei do racismo",
+    "ganho": "Pune ataques que hoje escapam",
+    "risco": "Uma definição ampla pode punir opinião",
     "quem": "Os dois",
     "lado": "B"
    },
    {
     "t": "Continuar como hoje",
     "muda": "Nada muda",
-    "ganho": "Evita uma lei nova de definição vaga",
-    "risco": "Ataques a mulheres como grupo, sobretudo nas redes, seguem sem punição clara",
+    "ganho": "Evita uma lei de definição vaga",
+    "risco": "Ataques a mulheres como grupo seguem impunes",
     "quem": "Nenhum",
     "lado": "N"
    }
@@ -469,23 +466,23 @@ const Q = [
  {
   "bloco": "Segurança, justiça e instituições",
   "titulo": "Segurança: menor de idade que comete crime grave",
-  "hoje": "menor de 18 anos cumpre medida socioeducativa, com internação de no máximo 3 anos. A idade está na Constituição.",
-  "p": "Um adolescente de 16 ou 17 anos que comete um crime grave, como homicídio ou estupro, deveria:",
+  "hoje": "Menor de 18 anos fica internado no máximo 3 anos.",
+  "p": "Um jovem de 16 ou 17 anos que comete crime grave deveria:",
   "conta": true,
   "op": [
    {
-    "t": "Ir para a prisão comum, como um adulto",
-    "muda": "Muda a Constituição. O jovem é julgado pelo Código Penal: homicídio simples, por exemplo, dá de 6 a 20 anos",
-    "ganho": "Pena proporcional ao crime, e as facções deixam de usar menores justamente porque eles pegam pena leve",
-    "risco": "Os presídios estão lotados e dominados por facções; o jovem tende a sair de lá mais ligado ao crime",
+    "t": "Ir para a prisão comum",
+    "muda": "Pena de adulto: homicídio dá de 6 a 20 anos",
+    "ganho": "Pena justa; facções param de usar menores",
+    "risco": "Presídio dominado por facção forma criminosos",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "Cumprir medida em instituição para menores, como é hoje",
-    "muda": "Nada muda: internação com escola obrigatória, por no máximo 3 anos, e saída obrigatória aos 21",
-    "ganho": "O foco é recuperar o jovem, longe dos presos adultos",
-    "risco": "No máximo 3 anos mesmo por homicídio, o que passa sensação de impunidade para a vítima e a família",
+    "t": "Ficar em instituição para menores",
+    "muda": "Nada muda: até 3 anos, com escola",
+    "ganho": "Foco em recuperar o jovem",
+    "risco": "Sensação de impunidade",
     "quem": "Lula",
     "lado": "L"
    }
@@ -504,23 +501,23 @@ const Q = [
  {
   "bloco": "Segurança, justiça e instituições",
   "titulo": "Segurança: facções criminosas",
-  "hoje": "no Brasil, facções são crime organizado. Em junho de 2026, os Estados Unidos classificaram PCC e CV como terroristas pela lei deles, e o governo brasileiro recusou fazer o mesmo aqui.",
-  "p": "Facções como PCC e Comando Vermelho deveriam ser tratadas, pela lei brasileira, como:",
+  "hoje": "São crime organizado. Os EUA já as classificam como terroristas; o Brasil não.",
+  "p": "PCC e Comando Vermelho deveriam ser, pela lei brasileira:",
   "conta": true,
   "op": [
    {
-    "t": "Crime organizado, com foco em cortar o dinheiro delas",
-    "muda": "Integrar facção continua dando de 3 a 8 anos; o foco é bloquear contas, bens e lavagem de dinheiro",
-    "ganho": "O Brasil decide sozinho como combater o crime dentro do seu território",
-    "risco": "Penas menores, e o Estado já perdeu bairros inteiros para as facções com o modelo atual",
+    "t": "Crime organizado",
+    "muda": "Pena de 3 a 8 anos, com foco em cortar o dinheiro",
+    "ganho": "O Brasil decide sozinho como combater",
+    "risco": "Penas menores, e as facções seguem dominando bairros",
     "quem": "Lula",
     "lado": "L"
    },
    {
     "t": "Grupos terroristas",
-    "muda": "Integrar facção vira terrorismo (5 a 8 anos; atos terroristas, 12 a 30). Polícia e Justiça ganham as ferramentas da lei antiterror",
-    "ganho": "Penas maiores e mais facilidade para rastrear o dinheiro das facções fora do país, junto com os Estados Unidos",
-    "risco": "Empresas honestas que fizerem negócio, sem saber, com uma empresa de fachada da facção podem ser investigadas por financiar terrorismo; construção, imóveis e postos de combustível são os setores mais expostos. O governo também teme abrir espaço para outro país agir militarmente contra esses grupos, como os EUA fizeram em 2025 com barcos de grupos que classificaram como terroristas no Caribe",
+    "muda": "Pena de 5 a 8 anos, até 30 em atentados",
+    "ganho": "Penas maiores e ajuda de fora para rastrear o dinheiro",
+    "risco": "Empresas honestas podem ser punidas sem saber, e abre espaço para ação de outros países",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -539,23 +536,23 @@ const Q = [
  {
   "bloco": "Segurança, justiça e instituições",
   "titulo": "Segurança: armas",
-  "hoje": "o cidadão comum pode ter até 2 armas em casa, se comprovar que precisa, com curso, exame psicológico e registro. Andar armado na rua é exceção.",
-  "p": "Sobre o cidadão comum ter arma de fogo:",
+  "hoje": "O cidadão pode ter até 2 armas em casa, se comprovar necessidade.",
+  "p": "Para o cidadão comum ter arma:",
   "conta": true,
   "op": [
    {
-    "t": "Deveria ser mais fácil comprar e ter arma para se defender",
-    "muda": "Volta a regras como as de 2019: até 4 armas por pessoa, sem precisar provar necessidade, e mais acesso para atiradores e caçadores (CACs)",
-    "ganho": "O cidadão pode se defender, sobretudo onde a polícia demora a chegar",
-    "risco": "Mais armas em circulação; armas compradas legalmente por CACs já foram encontradas com facções",
+    "t": "Deveria ficar mais fácil",
+    "muda": "Até 4 armas, sem provar necessidade (regra de 2019)",
+    "ganho": "Direito de se defender",
+    "risco": "Mais armas acabam desviadas para o crime",
     "quem": "Flávio",
     "lado": "F"
    },
    {
-    "t": "As regras deveriam continuar rígidas",
+    "t": "As regras continuam rígidas",
     "muda": "Nada muda",
-    "ganho": "Menos armas circulando, menos mortes em brigas e menos desvio para o crime",
-    "risco": "Quem mora em lugar violento fica sem meio legal de se defender, enquanto o criminoso continua armado",
+    "ganho": "Menos armas, menos mortes",
+    "risco": "Quem vive em lugar violento fica sem defesa legal",
     "quem": "Lula",
     "lado": "L"
    }
@@ -574,23 +571,23 @@ const Q = [
  {
   "bloco": "Segurança, justiça e instituições",
   "titulo": "Justiça: 8 de janeiro",
-  "hoje": "os condenados pela invasão das sedes dos Três Poderes em 8 de janeiro de 2023 cumprem as penas definidas pelo STF, maiores para quem teve participação maior. Parte dos réus fez acordo e cumpre pena alternativa.",
+  "hoje": "Os condenados pela invasão dos Três Poderes cumprem as penas definidas pelo STF.",
   "p": "Essas pessoas deveriam:",
   "conta": true,
   "op": [
    {
-    "t": "Cumprir as penas definidas pela Justiça",
+    "t": "Cumprir as penas",
     "muda": "Nada muda",
-    "ganho": "Mostra que atacar as instituições tem consequência e desestimula novos ataques",
-    "risco": "Penas longas para pessoas sem antecedentes e com participação pequena alimentam a sensação de injustiça e dividem o país",
+    "ganho": "Atacar as instituições tem consequência",
+    "risco": "Penas duras para quem teve papel pequeno",
     "quem": "Lula",
     "lado": "L"
    },
    {
-    "t": "Ser perdoadas ou ter as penas reduzidas por lei (anistia)",
-    "muda": "O Congresso aprova uma lei que apaga ou diminui as penas, e os condenados saem da prisão ou cumprem menos tempo",
-    "ganho": "Corrige penas vistas como exageradas e ajuda a pacificar o país",
-    "risco": "Sinaliza que atacar a democracia pode sair barato; o STF ainda pode derrubar a lei",
+    "t": "Receber anistia ou pena menor",
+    "muda": "O Congresso perdoa ou reduz as penas",
+    "ganho": "Corrige exageros e pacifica o país",
+    "risco": "Atacar a democracia sai barato",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -605,23 +602,23 @@ const Q = [
  {
   "bloco": "Segurança, justiça e instituições",
   "titulo": "Instituições: poderes do STF",
-  "hoje": "um ministro do STF pode, sozinho, suspender uma lei aprovada pelo Congresso ou um ato do presidente até o plenário julgar. Deputados e senadores são julgados criminalmente pelo próprio STF.",
+  "hoje": "Um ministro sozinho pode suspender uma lei, e deputados e senadores são julgados no STF.",
   "p": "Os poderes do STF deveriam:",
   "conta": true,
   "op": [
    {
     "t": "Continuar como estão",
     "muda": "Nada muda",
-    "ganho": "O tribunal pode agir rápido para barrar uma lei ou um ato que fira a Constituição, e a independência entre os Poderes fica preservada",
-    "risco": "Um único ministro pode travar por meses uma decisão do Congresso ou do presidente",
+    "ganho": "Barra rápido o que fere a Constituição",
+    "risco": "Um só ministro trava decisões por meses",
     "quem": "Lula (posição do PT; Lula não falou diretamente)",
     "lado": "L"
    },
    {
     "t": "Ser limitados",
-    "muda": "Um ministro sozinho não pode mais suspender lei do Congresso; deputados e senadores passam a ser julgados em outros tribunais; quem foi ministro de governo cumpre quarentena antes de ir para o STF",
-    "ganho": "Equilíbrio entre os Poderes: decisões grandes só com o plenário",
-    "risco": "Decisões urgentes demoram mais, e há quem veja nisso uma tentativa de enfraquecer o tribunal que julgou o 8 de janeiro",
+    "muda": "Lei só suspensa pelo plenário; políticos julgados em outros tribunais",
+    "ganho": "Mais equilíbrio entre os Poderes",
+    "risco": "Decisões urgentes demoram mais",
     "quem": "Flávio",
     "lado": "F"
    }
@@ -653,15 +650,14 @@ function render() {
   $("qcount").textContent = `Pergunta ${i + 1} de ${Q.length}`;
   $("qbloco").textContent = q.bloco;
   $("qbar").style.width = `${(i / Q.length) * 100}%`;
-  $("qtitulo").textContent = q.titulo;
   $("qhoje").textContent = q.hoje;
   $("qp").textContent = q.p;
   $("qopts").innerHTML = q.op.map((o, k) => `
     <div class="opt ${a.v === k ? "sel" : ""}" onclick="pick(${k})">
       <div class="t">${"AB"[k]}. ${esc(o.t)}</div>
-      <div class="muda"><b>O que muda:</b> ${esc(o.muda)}</div>
-      ${a.open[k] ? `<div class="pc"><p class="g"><b>Ganho, segundo quem defende:</b> ${esc(o.ganho)}</p><p class="r"><b>Risco, segundo quem critica:</b> ${esc(o.risco)}</p></div>` : ""}
-      <button class="link" onclick="event.stopPropagation(); toggle(${k})">${a.open[k] ? "esconder prós e contras" : "ver prós e contras"}</button>
+      <div class="muda muted">${esc(o.muda)}</div>
+      <button class="pcbtn ${a.open[k] ? "on" : ""}" onclick="event.stopPropagation(); toggle(${k})" aria-expanded="${!!a.open[k]}"><span>${a.open[k] ? "Esconder prós e contras" : "Ver prós e contras"}</span><span class="chev">▾</span></button>
+      ${a.open[k] ? `<div class="pc"><p class="g"><b>A favor:</b> ${esc(o.ganho)}</p><p class="r"><b>Contra:</b> ${esc(o.risco)}</p></div>` : ""}
     </div>`).join("");
   $("qns").className = "ns" + (a.v === -1 ? " sel" : "");
   $("qns").onclick = () => pick(-1);
@@ -688,16 +684,16 @@ function showResult() {
   let v, t;
   if (n.N >= Math.ceil(total / 2)) {
     v = "Ainda em dúvida";
-    t = `Você respondeu "Não sei / depende" em ${n.N} das ${total} perguntas que contam. Vale ler os prós e contras dos temas em aberto e conversar sobre eles.`;
+    t = `"Não sei" em ${n.N} das ${total} perguntas. Vale abrir os prós e contras desses temas.`;
   } else if (diff >= 3) {
     v = `Mais alinhado a ${CAND[lead]}`;
-    t = `Nas perguntas em que você escolheu um lado, ${CAND[lead]} defende a mesma posição que você em ${n[lead]} e ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
+    t = `Você pensa como ${CAND[lead]} em ${n[lead]} temas, e como ${CAND[lead === "L" ? "F" : "L"]} em ${n[lead === "L" ? "F" : "L"]}.`;
   } else {
     v = "Dividido / terceira via";
-    t = "Suas opiniões se dividem entre os dois: você concorda com cada um em temas diferentes, e nenhum representa bem o conjunto do que você pensa.";
+    t = "Você concorda com cada um em temas diferentes, e nenhum dos dois representa bem o que você pensa.";
   }
   $("verdict").textContent = v; $("verdictTxt").textContent = t;
-  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas; as outras ${Q.length - total} são só para reflexão.`;
+  $("countNote").textContent = `Contam ${total} das ${Q.length} perguntas. "Não sei" não conta para ninguém.`;
   const label = (q, a) => a.v === -1 ? "Não sei / depende" : `${"AB"[a.v]}. ${q.op[a.v].t}`;
   const quem = (q, a) => a.v === -1 ? "" : ` · quem defende: ${q.op[a.v].quem}`;
   const imp = Q.map((q, k) => [q, ans[k]]).filter(([, a]) => a.w);
